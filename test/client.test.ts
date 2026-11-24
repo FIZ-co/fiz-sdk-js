@@ -297,6 +297,45 @@ describe('retries', () => {
     expect(requests.map((r) => r.headers['idempotency-key'])).toEqual(['order-9', 'order-9']);
   });
 
+  it.each([
+    ['a 503 on a write', 503, {}, 1],
+    ['a 429 with a Retry-After longer than a minute', 429, { 'retry-after': '120' }, 1],
+  ])('keeps the status rules when the body of %s is cut off', async (_label, status, extra, calls) => {
+    const cutOff = () =>
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.error(new TypeError('terminated'));
+          },
+        }),
+        { status, headers: { 'content-type': 'application/json', ...extra } },
+      );
+    const { fiz, requests } = mockFiz([cutOff, { status: 201, body: { id: 'c1' } }]);
+    const error = await fiz.customers.create(customer).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(FizApiError);
+    expect(error).toMatchObject({ status });
+    expect(requests).toHaveLength(calls);
+  });
+
+  it('waits out the Retry-After of a 429 whose body is cut off', async () => {
+    vi.useFakeTimers();
+    const cutOff = () =>
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.error(new TypeError('terminated'));
+          },
+        }),
+        { status: 429, headers: { 'retry-after': '2' } },
+      );
+    const { fiz, requests } = mockFiz([cutOff, { status: 201, body: { id: 'c1' } }]);
+    const result = fiz.customers.create(customer);
+    await vi.advanceTimersByTimeAsync(1_999);
+    expect(requests).toHaveLength(1);
+    await vi.advanceTimersByTimeAsync(1);
+    await expect(result).resolves.toEqual({ id: 'c1' });
+  });
+
   it('reports a cut-off body with the key when it cannot retry', async () => {
     const cutOff = () =>
       new Response(

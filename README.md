@@ -39,6 +39,9 @@ if (fiz.environment !== 'sandbox') {
 // Which company is this, and can it issue yet?
 const company = await fiz.company.retrieve();
 if (!company.readiness.ready) console.log(company.readiness.reasons);
+// Every invoice states one of the company's activity codes (CAE).
+const cae = company.cae[0];
+if (!cae) throw new Error('The company has no CAE yet: add its activity in FIZ first.');
 
 const customer = await fiz.customers.create({ name: 'Example customer', country: 'PT' });
 const item = await fiz.items.create({
@@ -51,7 +54,7 @@ const item = await fiz.items.create({
 // A draft has no number and no fiscal effect.
 const draft = await fiz.invoices.create({
   type: 'INVOICE',
-  cae: company.cae[0],
+  cae,
   customerId: customer.id,
   items: [{ id: item.id, quantity: 1 }],
 });

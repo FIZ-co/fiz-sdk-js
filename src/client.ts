@@ -146,14 +146,18 @@ export class FizClient {
 
     for (let attempt = 0; ; attempt++) {
       const canRetry = attempt < maxRetries;
+      // Two ways an attempt can go without a usable answer, decided apart:
+      //  - no status at all (the request may or may not have arrived): repeat
+      //    only what is safe to repeat blind;
+      //  - a status whose body was cut off: the status still decides, exactly
+      //    as with a body (a 503 or 429 keeps its own rules and Retry-After).
+      //    Only a success whose body is lost is a lost response, which the same
+      //    Idempotency-Key recovers.
       let response: Response;
       let payload: unknown;
+      let bodyLost: unknown;
       try {
         response = await this.attempt(url, operation.method, headers, body, timeout, options.signal);
-        // Inside the try: the headers can arrive and the body still be cut
-        // off. For a write that already happened, that is a lost response,
-        // not a bug, and the same key recovers it.
-        payload = await parseBody(response);
       } catch (error) {
         if (options.signal?.aborted) throw options.signal.reason ?? error;
         if (!repeatable || !canRetry) {
@@ -162,8 +166,21 @@ export class FizClient {
         await sleep(backoff(attempt), options.signal);
         continue;
       }
+      try {
+        payload = await parseBody(response);
+      } catch (error) {
+        if (options.signal?.aborted) throw options.signal.reason ?? error;
+        bodyLost = error;
+      }
 
-      if (response.ok) return payload as ResponseBody<K>;
+      if (response.ok) {
+        if (bodyLost === undefined) return payload as ResponseBody<K>;
+        if (!repeatable || !canRetry) {
+          throw noResponseError(bodyLost, `${operation.method} ${path}`, timeout, idempotencyKey);
+        }
+        await sleep(backoff(attempt), options.signal);
+        continue;
+      }
       if (isRedirect(response)) {
         // Not followed: the credentials go to the API's origin only.
         throw new FizError(
