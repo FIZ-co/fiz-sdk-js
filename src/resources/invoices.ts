@@ -79,8 +79,12 @@ export class Invoices extends Resource {
 export class CreditNotes extends Resource {
   /**
    * Creates a credit note. Without `items` it reverses the invoice in full;
-   * with `items` it changes the quantity or price of the given lines. With
-   * `issue: true` it is issued at once: **fiscal and irreversible**.
+   * with `items` it changes the quantity or price of the given lines.
+   *
+   * **Issued at once by default**: without `issue: false` the note is
+   * numbered and reported to the AT in this call, which with a production key
+   * is fiscal and irreversible. Pass `issue: false` for a draft, then
+   * `invoices.issue(note.id)` once it has been reviewed.
    */
   create(body: RequestBody<'InvoicesController_createCreditNote'>, options?: RequestOptions) {
     return this.client.call('InvoicesController_createCreditNote', { body }, options);

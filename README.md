@@ -16,19 +16,24 @@ operation typed from the API's OpenAPI document, with safe retries built in.
 npm install @fiz-co/sdk
 ```
 
-Node.js 20 or later (CI tests 20, 22 and 24). Server-side only: an API key acts for the
+Node.js 20.3 or later (CI tests 20, 22 and 24). Server-side only: an API key acts for the
 whole company and must never reach a browser.
 
 ## Quickstart
 
-Create an API key at [app.fiz.co → Settings → Integrations](https://app.fiz.co/settings/integrations)
-and put it in `FIZ_API_KEY`. A key starting with `fiz_test_` reaches the
-**sandbox**: documents go to the AT test services and have no fiscal effect.
+Run it with a **sandbox key**: create one at [app.fiz.co → Settings → Integrations](https://app.fiz.co/settings/integrations)
+and put it in `FIZ_API_KEY`. A key starting with `fiz_test_` sends documents
+to the AT test services, with no fiscal effect. The walkthrough below stops on
+any other key, because its last step issues a real invoice with a production
+key.
 
 ```ts
 import { Fiz } from '@fiz-co/sdk';
 
 const fiz = new Fiz(); // reads FIZ_API_KEY
+if (fiz.environment !== 'sandbox') {
+  throw new Error('Use a sandbox key (fiz_test_…) for this walkthrough.');
+}
 
 // Which company is this, and can it issue yet?
 const company = await fiz.company.retrieve();
@@ -43,29 +48,31 @@ const item = await fiz.items.create({
 });
 
 // A draft has no number and no fiscal effect.
-const { id } = await fiz.invoices.create({
+const draft = await fiz.invoices.create({
   type: 'INVOICE',
   cae: company.cae[0],
   customerId: customer.id,
   items: [{ id: item.id, quantity: 1 }],
 });
-const draft = await fiz.invoices.retrieve(id);
-const pdf = await fiz.invoices.downloadPdf(id); // ArrayBuffer
+const pdf = await fiz.invoices.downloadPdf(draft.id); // ArrayBuffer
 
-// Issuing is fiscal and irreversible: numbered, ATCUD, reported to the AT.
-// expectedUpdatedAt refuses a draft that changed since you read it.
-const invoice = await fiz.invoices.issue(id, { expectedUpdatedAt: draft.updatedAt });
+// Issuing is fiscal and irreversible with a production key: numbered, ATCUD,
+// reported to the AT. expectedUpdatedAt issues exactly the draft you looked
+// at, and refuses it if it changed since.
+const invoice = await fiz.invoices.issue(draft.id, { expectedUpdatedAt: draft.updatedAt });
 console.log(invoice.number, invoice.atcud);
 ```
 
 A runnable version is in [`examples/quickstart.ts`](examples/quickstart.ts).
+It issues in two runs: the first creates the draft and saves its PDF, the
+second issues that draft by its id, after you have looked at it.
 
 ## What it covers
 
 | | |
 |---|---|
 | `fiz.invoices` | invoices, simplified invoices, invoice-receipts: `create`, `list`, `listAll`, `retrieve`, `update`, `delete`, `issue`, `pay`, `cancel`, `pdf`, `downloadPdf` |
-| `fiz.creditNotes` | full or per-line credit notes |
+| `fiz.creditNotes` | full or per-line credit notes (issued at once unless `issue: false`) |
 | `fiz.recurringInvoices` | invoices FIZ issues on a schedule |
 | `fiz.proposals` | pro formas (no fiscal effect) |
 | `fiz.transportDocuments` | guias de transporte (GR, GT, GA, GC, GD) |
@@ -231,9 +238,10 @@ npm install @fiz-co/sdk
 1. Crie uma chave API em [app.fiz.co → Definições → Integrações](https://app.fiz.co/settings/integrations)
    e guarde-a em `FIZ_API_KEY`. Uma chave `fiz_test_` usa o **sandbox**:
    serviços de teste da AT, sem efeito fiscal.
-2. Siga o exemplo do [Quickstart](#quickstart): cliente e artigo → rascunho
-   e PDF → emissão. Um rascunho não tem efeito fiscal; a emissão é
-   irreversível e comunicada à AT.
+2. Siga o exemplo do [Quickstart](#quickstart) com uma chave de sandbox:
+   cliente e artigo → rascunho e PDF → emissão. Um rascunho não tem efeito
+   fiscal; com uma chave de produção, a emissão é irreversível e comunicada à
+   AT.
 3. Cada escrita leva uma `Idempotency-Key`, reutilizada nas repetições
    automáticas: um timeout nunca dá origem a uma fatura duplicada.
 

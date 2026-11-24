@@ -18,6 +18,9 @@ export const DEFAULT_BASE_URL = 'https://api.fiz.co';
 const SANDBOX_KEY_PREFIX = 'fiz_test_';
 /** A longer Retry-After is not waited for: the error is thrown instead. */
 const MAX_RETRY_AFTER_MS = 60_000;
+const MAX_REDIRECTS = 5;
+/** What the API accepts as an Idempotency-Key: 1–128 visible ASCII characters. */
+const IDEMPOTENCY_KEY_PATTERN = /^[\x21-\x7e]{1,128}$/;
 
 export interface FizOptions {
   /**
@@ -110,10 +113,16 @@ export class FizClient {
       ...this.authHeaders,
     });
     for (const [name, value] of Object.entries(options.headers ?? {})) headers.set(name, value);
+    // One key for the whole call, every retry included. A key the caller gave
+    // (option or header) is checked here: an empty one would send no header
+    // while the retry logic still treated the write as safe to repeat.
     const idempotencyKey = operation.idempotent
-      ? (options.idempotencyKey ?? headers.get('idempotency-key') ?? globalThis.crypto.randomUUID())
+      ? checkedIdempotencyKey(
+          options.idempotencyKey ?? headers.get('idempotency-key') ?? undefined,
+        )
       : undefined;
     if (idempotencyKey) headers.set('idempotency-key', idempotencyKey);
+    else headers.delete('idempotency-key');
     const hasBody = args.body !== undefined;
     if (hasBody) headers.set('content-type', 'application/json');
     const body = hasBody ? JSON.stringify(args.body) : undefined;
@@ -127,8 +136,13 @@ export class FizClient {
     for (let attempt = 0; ; attempt++) {
       const canRetry = attempt < maxRetries;
       let response: Response;
+      let payload: unknown;
       try {
         response = await this.attempt(url, operation.method, headers, body, timeout, options.signal);
+        // Inside the try: the headers can arrive and the body still be cut
+        // off. For a write that already happened, that is a lost response,
+        // not a bug, and the same key recovers it.
+        payload = await parseBody(response);
       } catch (error) {
         if (options.signal?.aborted) throw options.signal.reason ?? error;
         if (!repeatable || !canRetry) {
@@ -138,11 +152,17 @@ export class FizClient {
         continue;
       }
 
-      if (response.ok) return (await parseBody(response)) as ResponseBody<K>;
+      if (response.ok) return payload as ResponseBody<K>;
+      if (isRedirect(response)) {
+        // Not followed: the credentials go to the API's origin only.
+        throw new FizError(
+          `${operation.method} ${path} answered with a redirect${location(response)}; it was not followed.`,
+        );
+      }
 
       const error = FizApiError.from({
         status: response.status,
-        body: await parseBody(response),
+        body: payload,
         headers: response.headers,
         method: operation.method,
         path,
@@ -163,23 +183,35 @@ export class FizClient {
 
   /**
    * Downloads a file the API linked to (a PDF, an export). Credentials are
-   * sent only when the link is on the API's own origin.
+   * sent only to the API's own origin, checked again on every redirect: fetch
+   * would otherwise carry `x-api-key` to wherever a redirect points.
    */
   async download(fileUrl: string, options: Pick<RequestOptions, 'timeout' | 'signal'> = {}): Promise<ArrayBuffer> {
-    const url = new URL(fileUrl);
-    const sameOrigin = url.origin === new URL(this.baseUrl).origin;
-    const response = await this.attempt(
-      fileUrl,
-      'GET',
-      sameOrigin ? { 'user-agent': this.userAgent, ...this.authHeaders } : {},
-      undefined,
-      options.timeout ?? this.timeout,
-      options.signal,
-    );
-    if (!response.ok) {
-      throw new FizError(`Downloading ${url.pathname} failed with ${response.status}`);
+    const apiOrigin = new URL(this.baseUrl).origin;
+    let url = new URL(fileUrl);
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+      const response = await this.attempt(
+        url.href,
+        'GET',
+        url.origin === apiOrigin ? { 'user-agent': this.userAgent, ...this.authHeaders } : {},
+        undefined,
+        options.timeout ?? this.timeout,
+        options.signal,
+      );
+      if (isRedirect(response)) {
+        const next = response.headers.get('location');
+        if (!next) {
+          throw new FizError(`Downloading ${url.pathname}: a redirect this runtime does not expose`);
+        }
+        url = new URL(next, url);
+        continue;
+      }
+      if (!response.ok) {
+        throw new FizError(`Downloading ${url.pathname} failed with ${response.status}`);
+      }
+      return response.arrayBuffer();
     }
-    return response.arrayBuffer();
+    throw new FizError(`Downloading ${new URL(fileUrl).pathname}: more than ${MAX_REDIRECTS} redirects`);
   }
 
   private attempt(
@@ -195,6 +227,9 @@ export class FizClient {
       method,
       headers,
       body,
+      // Never followed automatically: a redirect keeps custom headers such as
+      // x-api-key, whatever origin it points to.
+      redirect: 'manual',
       signal: signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal,
     });
   }
@@ -313,7 +348,31 @@ function noResponseError(
     return new FizTimeoutError(`${request} timed out after ${timeout} ms`, idempotencyKey, { cause: error });
   }
   const reason = error instanceof Error ? error.message : String(error);
-  return new FizConnectionError(`${request} failed: no response (${reason})`, idempotencyKey, {
+  return new FizConnectionError(`${request} failed: no complete response (${reason})`, idempotencyKey, {
     cause: error,
   });
+}
+
+/**
+ * The caller's Idempotency-Key, refused before sending when the API would
+ * refuse it; a new UUID when there is none.
+ */
+function checkedIdempotencyKey(given: string | undefined): string {
+  if (given === undefined) return globalThis.crypto.randomUUID();
+  if (!IDEMPOTENCY_KEY_PATTERN.test(given)) {
+    throw new FizError(
+      'idempotencyKey must be 1 to 128 visible ASCII characters (no spaces); omit it to have one generated.',
+    );
+  }
+  return given;
+}
+
+/** A 3xx, or the opaque redirect a browser returns for `redirect: 'manual'`. */
+function isRedirect(response: Response): boolean {
+  return response.type === 'opaqueredirect' || (response.status >= 300 && response.status < 400);
+}
+
+function location(response: Response): string {
+  const target = response.headers.get('location');
+  return target ? ` to ${target}` : '';
 }
