@@ -42,7 +42,8 @@ export class Invoices extends Resource {
   /**
    * Issues a draft: numbers it in its series, adds the ATCUD and QR code and
    * reports it to the AT. **Fiscal and irreversible** (with a production key).
-   * Pass the draft's `updatedAt` as `expectedUpdatedAt` so a draft changed
+   * Pass the draft's `updatedAt` (from `create`, `update` or `retrieve`) as
+   * `expectedUpdatedAt`; if it is missing, do not issue. A draft changed
    * since you read it is refused instead of issued.
    */
   issue(id: string, body: RequestBody<'InvoicesController_issue'> = {}, options?: RequestOptions) {
