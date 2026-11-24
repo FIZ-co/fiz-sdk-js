@@ -4,10 +4,14 @@ name: Release
 # publishing: GitHub's OIDC token proves this workflow to npm, so there is no
 # npm token anywhere, and npm attaches provenance on its own (public repo).
 #
-# One-time setup, on npmjs.com: @fiz-co/sdk → Settings → Trusted Publisher →
-# GitHub Actions: organization FIZ-co, repository fiz-sdk-js, workflow
-# release.yml, environment npm. The package had to exist first, so 0.1.0 was
-# published by hand; the tag of a version already on npm is skipped here.
+# One-time setup, in this order (README, "Releasing"):
+#  1. Publish the first version by hand (`npm publish --access public`): npm
+#     adds a trusted publisher only to a package that already exists.
+#  2. On npmjs.com: @fiz-co/sdk → Settings → Trusted Publisher → GitHub
+#     Actions: organization FIZ-co, repository fiz-sdk-js, workflow
+#     release.yml, environment npm.
+# The tag of a version that is already on npm (the hand-published one) is
+# skipped here rather than failing.
 on:
   push:
     tags: ['v*']
