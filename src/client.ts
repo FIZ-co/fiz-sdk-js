@@ -167,14 +167,17 @@ export class FizClient {
         continue;
       }
       try {
-        payload = await parseBody(response);
+        const text = await response.text();
+        // Every operation answers a success in JSON (test/coverage.test.ts
+        // holds the API document to that), so a success is parsed as JSON
+        // whatever Content-Type says, and one that does not parse is a lost
+        // response: issue() must not "succeed" with half an invoice or an
+        // HTML page. An error body is read loosely; its status decides.
+        if (response.ok) payload = JSON.parse(text);
+        else payload = parseErrorBody(text);
       } catch (error) {
         if (options.signal?.aborted) throw options.signal.reason ?? error;
-        // An error status decides by itself; what arrived of its body is
-        // kept for the message. A success without its JSON is a lost
-        // response (issue() must not "succeed" with half an invoice).
-        if (!response.ok && error instanceof MalformedJsonBody) payload = error.text || undefined;
-        else bodyLost = error;
+        bodyLost = error;
       }
 
       if (response.ok) {
@@ -311,24 +314,12 @@ function queryString(query: Record<string, unknown> | undefined): string {
   return text ? `?${text}` : '';
 }
 
-/**
- * A body announced as JSON that is not JSON (cut off mid-way, or empty): the
- * response is incomplete. `text` is what did arrive, kept for an error body.
- */
-class MalformedJsonBody extends Error {
-  constructor(readonly text: string) {
-    super(text ? 'Response body is not valid JSON' : 'Response body announced as JSON is empty');
-  }
-}
-
-async function parseBody(response: Response): Promise<unknown> {
-  const text = await response.text();
-  const type = response.headers.get('content-type') ?? '';
-  if (!type.includes('json')) return text || undefined;
+/** An error response's body: its JSON when it is JSON, else the text, if any. */
+function parseErrorBody(text: string): unknown {
   try {
     return JSON.parse(text);
   } catch {
-    throw new MalformedJsonBody(text);
+    return text || undefined;
   }
 }
 

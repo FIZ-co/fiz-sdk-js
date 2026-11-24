@@ -319,6 +319,25 @@ describe('retries', () => {
     expect(error).toMatchObject({ idempotencyKey: 'issue-1' });
   });
 
+  it('parses a success as JSON whatever the Content-Type spelling', async () => {
+    const reply = () =>
+      new Response('{"id":"inv1","number":"FT 2026/1"}', {
+        status: 200,
+        headers: { 'content-type': 'Application/JSON; charset=UTF-8' },
+      });
+    const { fiz } = mockFiz([reply]);
+    await expect(fiz.invoices.issue('inv1')).resolves.toMatchObject({ number: 'FT 2026/1' });
+  });
+
+  it('never returns an HTML page as a success', async () => {
+    const html = () =>
+      new Response('<html>maintenance</html>', { status: 200, headers: { 'content-type': 'text/html' } });
+    const { fiz } = mockFiz([html], { maxRetries: 0 });
+    const error = await fiz.invoices.issue('inv1', {}, { idempotencyKey: 'issue-1' }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(FizConnectionError);
+    expect(error).toMatchObject({ idempotencyKey: 'issue-1' });
+  });
+
   it('keeps a broken error body as text and lets the status decide', async () => {
     const broken = () =>
       new Response('upstream <html> error', { status: 400, headers: { 'content-type': 'application/json' } });
