@@ -20,5 +20,7 @@ First release.
 - An `Idempotency-Key` the API would refuse (empty, spaces, over 128
   characters) is refused before sending; a response whose body is cut off
   is retried with the same key, or reported with it.
+- `onResponse` hook: every response's operation, status, `requestId`,
+  key, replay flag, attempt and timing.
 - Node.js 20.3 or later. Refuses to start in a browser unless
   `dangerouslyAllowBrowser: true`.

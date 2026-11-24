@@ -471,6 +471,78 @@ describe('pagination', () => {
   });
 });
 
+describe('onResponse', () => {
+  it('reports every response, retries included', async () => {
+    vi.useFakeTimers();
+    const seen: unknown[] = [];
+    const { fiz } = mockFiz(
+      [
+        { status: 429, body: { statusCode: 429, message: 'slow' }, headers: { 'retry-after': '1', 'x-request-id': 'r1' } },
+        { status: 200, body: { id: 'inv1' }, headers: { 'x-request-id': 'r2', 'idempotent-replayed': 'true' } },
+      ],
+      { onResponse: (info) => seen.push(info) },
+    );
+    const result = fiz.invoices.issue('inv1', {}, { idempotencyKey: 'issue-1' });
+    await vi.runAllTimersAsync();
+    await result;
+    expect(seen).toEqual([
+      expect.objectContaining({
+        operationId: 'InvoicesController_issue',
+        method: 'POST',
+        path: '/invoices/{id}/issue',
+        status: 429,
+        requestId: 'r1',
+        idempotencyKey: 'issue-1',
+        replayed: false,
+        attempt: 1,
+      }),
+      expect.objectContaining({ status: 200, requestId: 'r2', replayed: true, attempt: 2 }),
+    ]);
+  });
+
+  it('never fails the call, nor leaves a rejection, when an async hook rejects', async () => {
+    const { fiz } = mockFiz([{ status: 200, body: { id: 'inv1' } }], {
+      onResponse: async () => {
+        throw new Error('logger down');
+      },
+    });
+    const unhandled: unknown[] = [];
+    const listener = (reason: unknown) => unhandled.push(reason);
+    process.on('unhandledRejection', listener);
+    try {
+      await expect(fiz.invoices.issue('inv1')).resolves.toEqual({ id: 'inv1' });
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      expect(unhandled).toEqual([]);
+    } finally {
+      process.off('unhandledRejection', listener);
+    }
+  });
+
+  it('does not wait for an async hook', async () => {
+    let finished = false;
+    const { fiz } = mockFiz([{ status: 200, body: {} }], {
+      onResponse: () =>
+        new Promise<void>((resolve) =>
+          setTimeout(() => {
+            finished = true;
+            resolve();
+          }, 50),
+        ),
+    });
+    await fiz.company.retrieve();
+    expect(finished).toBe(false);
+  });
+
+  it('never fails the call when the hook throws', async () => {
+    const { fiz } = mockFiz([{ status: 200, body: {} }], {
+      onResponse: () => {
+        throw new Error('logger down');
+      },
+    });
+    await expect(fiz.company.retrieve()).resolves.toEqual({});
+  });
+});
+
 describe('redirects', () => {
   it('are never followed on an API call', async () => {
     const { fiz, requests } = mockFiz([
