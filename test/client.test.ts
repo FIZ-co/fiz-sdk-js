@@ -1,0 +1,299 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+  Fiz,
+  FizApiError,
+  FizAuthenticationError,
+  FizBadRequestError,
+  FizConflictError,
+  FizConnectionError,
+  FizError,
+  FizNotFoundError,
+  FizRateLimitError,
+  FizServerError,
+} from '../src/index.js';
+import { mockFiz } from './helpers.js';
+
+const customer = { name: 'Example customer', country: 'PT' };
+
+afterEach(() => {
+  vi.useRealTimers();
+  vi.unstubAllEnvs();
+});
+
+describe('credentials', () => {
+  it('sends the API key as x-api-key', async () => {
+    const { fiz, requests } = mockFiz([{ status: 200, body: {} }]);
+    await fiz.company.retrieve();
+    expect(requests[0]!.headers['x-api-key']).toBe('fiz_live_key');
+    expect(requests[0]!.headers.authorization).toBeUndefined();
+    expect(requests[0]!.url.href).toBe('https://api.fiz.co/company');
+  });
+
+  it('sends an access token as a bearer token', async () => {
+    const { fiz, requests } = mockFiz([{ status: 200, body: {} }], {
+      apiKey: undefined,
+      accessToken: 'fiz_oat_token',
+    });
+    await fiz.company.retrieve();
+    expect(requests[0]!.headers.authorization).toBe('Bearer fiz_oat_token');
+    expect(requests[0]!.headers['x-api-key']).toBeUndefined();
+  });
+
+  it('reads FIZ_API_KEY when no credential is passed', async () => {
+    vi.stubEnv('FIZ_API_KEY', 'fiz_test_from_env');
+    const { fiz, requests } = mockFiz([{ status: 200, body: {} }], { apiKey: undefined });
+    await fiz.company.retrieve();
+    expect(requests[0]!.headers['x-api-key']).toBe('fiz_test_from_env');
+    expect(fiz.environment).toBe('sandbox');
+  });
+
+  it('refuses both credentials, and none', () => {
+    vi.stubEnv('FIZ_API_KEY', '');
+    expect(() => new Fiz({ apiKey: 'a', accessToken: 'b', fetch })).toThrow(FizError);
+    expect(() => new Fiz({ fetch })).toThrow(/FIZ_API_KEY/);
+  });
+
+  it('reports the environment from the key prefix', () => {
+    expect(new Fiz({ apiKey: 'fiz_test_x', fetch }).environment).toBe('sandbox');
+    expect(new Fiz({ apiKey: 'fiz_live_x', fetch }).environment).toBe('production');
+    expect(new Fiz({ accessToken: 'fiz_oat_x', fetch }).environment).toBe('production');
+  });
+
+  it('identifies itself and the integration in the User-Agent', async () => {
+    const { fiz, requests } = mockFiz([{ status: 200, body: {} }], {
+      appInfo: { name: 'acme-shop', version: '2.1.0' },
+    });
+    await fiz.company.retrieve();
+    expect(requests[0]!.headers['user-agent']).toMatch(/^fiz-sdk-js\/\d+\.\d+\.\d+ node\/\S+ acme-shop\/2\.1\.0$/);
+  });
+});
+
+describe('requests', () => {
+  it('expands path parameters and encodes them', async () => {
+    const { fiz, requests } = mockFiz([{ status: 200, body: {} }]);
+    await fiz.invoices.retrieve('a/b');
+    expect(requests[0]!.url.pathname).toBe('/invoices/a%2Fb');
+  });
+
+  it('serialises query parameters, repeating arrays and skipping undefined', async () => {
+    const { fiz, requests } = mockFiz([{ status: 200, body: [] }]);
+    await fiz.bank.transactions({
+      connectionId: 'c1',
+      types: ['INCOME', 'EXPENSE'] as never,
+      searchString: undefined,
+    });
+    const query = requests[0]!.url.searchParams;
+    expect(query.getAll('types')).toEqual(['INCOME', 'EXPENSE']);
+    expect(query.get('connectionId')).toBe('c1');
+    expect(query.has('searchString')).toBe(false);
+  });
+
+  it('sends a JSON body', async () => {
+    const { fiz, requests } = mockFiz([{ status: 201, body: { id: 'c1' } }]);
+    const created = await fiz.customers.create(customer);
+    expect(created).toEqual({ id: 'c1' });
+    expect(requests[0]!.method).toBe('POST');
+    expect(requests[0]!.headers['content-type']).toBe('application/json');
+    expect(requests[0]!.body).toEqual(customer);
+  });
+
+  it('uses another base URL', async () => {
+    const { fiz, requests } = mockFiz([{ status: 200, body: {} }], { baseUrl: 'http://localhost:8080/' });
+    await fiz.company.retrieve();
+    expect(requests[0]!.url.href).toBe('http://localhost:8080/company');
+  });
+});
+
+describe('Idempotency-Key', () => {
+  it('is generated for a write', async () => {
+    const { fiz, requests } = mockFiz([{ status: 201, body: {} }]);
+    await fiz.customers.create(customer);
+    expect(requests[0]!.headers['idempotency-key']).toMatch(/^[0-9a-f-]{36}$/);
+  });
+
+  it('is the caller’s when given', async () => {
+    const { fiz, requests } = mockFiz([{ status: 201, body: {} }]);
+    await fiz.customers.create(customer, { idempotencyKey: 'order-1042-customer' });
+    expect(requests[0]!.headers['idempotency-key']).toBe('order-1042-customer');
+  });
+
+  it('is not sent on a read, nor on an operation that does not take one', async () => {
+    const { fiz, requests } = mockFiz([
+      { status: 200, body: [] },
+      { status: 200, body: {} },
+    ]);
+    await fiz.invoices.list();
+    await fiz.templates.validate({} as never);
+    expect(requests.map((r) => r.headers['idempotency-key'])).toEqual([undefined, undefined]);
+  });
+});
+
+describe('errors', () => {
+  it('carries status, code, messages and the request id', async () => {
+    const { fiz } = mockFiz([
+      {
+        status: 404,
+        body: { statusCode: 404, message: 'Invoice not found', code: 'ENTITY_NOT_FOUND' },
+        headers: { 'x-request-id': 'req-1' },
+      },
+    ]);
+    const error = await fiz.invoices.retrieve('x').catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(FizNotFoundError);
+    expect(error).toBeInstanceOf(FizApiError);
+    expect(error).toMatchObject({
+      status: 404,
+      code: 'ENTITY_NOT_FOUND',
+      messages: ['Invoice not found'],
+      requestId: 'req-1',
+    });
+    expect((error as Error).message).toBe('GET /invoices/x failed with 404: Invoice not found');
+  });
+
+  it('lists every validation message', async () => {
+    const { fiz } = mockFiz([
+      {
+        status: 400,
+        body: { statusCode: 400, message: ['name must be a string', 'property x should not exist'], error: 'Bad Request' },
+      },
+    ]);
+    const error = await fiz.customers.create(customer).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(FizBadRequestError);
+    expect((error as FizApiError).messages).toHaveLength(2);
+    expect((error as FizApiError).code).toBeUndefined();
+    expect((error as FizApiError).idempotencyKey).toMatch(/^[0-9a-f-]{36}$/);
+  });
+
+  it('maps 401 and 5xx', async () => {
+    const { fiz } = mockFiz([
+      { status: 401, body: { statusCode: 401, message: 'API key is missing' } },
+      { status: 500, body: { statusCode: 500, message: 'boom' } },
+    ]);
+    await expect(fiz.company.retrieve()).rejects.toBeInstanceOf(FizAuthenticationError);
+    await expect(fiz.customers.create(customer)).rejects.toBeInstanceOf(FizServerError);
+  });
+});
+
+describe('retries', () => {
+  it('retries a 429 after Retry-After', async () => {
+    vi.useFakeTimers();
+    const { fiz, requests } = mockFiz([
+      { status: 429, body: { statusCode: 429, message: 'slow down' }, headers: { 'retry-after': '2' } },
+      { status: 201, body: { id: 'c1' } },
+    ]);
+    const result = fiz.customers.create(customer);
+    await vi.advanceTimersByTimeAsync(1_999);
+    expect(requests).toHaveLength(1);
+    await vi.advanceTimersByTimeAsync(1);
+    await expect(result).resolves.toEqual({ id: 'c1' });
+    expect(requests[1]!.headers['idempotency-key']).toBe(requests[0]!.headers['idempotency-key']);
+  });
+
+  it('gives up after maxRetries', async () => {
+    const limited = { status: 429, body: { statusCode: 429, message: 'slow down' }, headers: { 'retry-after': '0' } };
+    const { fiz, requests } = mockFiz([limited, limited, limited]);
+    await expect(fiz.company.retrieve()).rejects.toBeInstanceOf(FizRateLimitError);
+    expect(requests).toHaveLength(3);
+  });
+
+  it('repeats a write that got no response with the SAME key', async () => {
+    vi.useFakeTimers();
+    const { fiz, requests } = mockFiz([new TypeError('fetch failed'), { status: 201, body: { id: 'c1' } }]);
+    const result = fiz.customers.create(customer);
+    await vi.runAllTimersAsync();
+    await expect(result).resolves.toEqual({ id: 'c1' });
+    expect(requests).toHaveLength(2);
+    expect(requests[1]!.headers['idempotency-key']).toBe(requests[0]!.headers['idempotency-key']);
+  });
+
+  it('waits for a write still in progress (409 with Retry-After)', async () => {
+    vi.useFakeTimers();
+    const { fiz, requests } = mockFiz([
+      { status: 409, body: { statusCode: 409, message: 'still being processed' }, headers: { 'retry-after': '1' } },
+      { status: 200, body: { id: 'inv1', number: 'FT 2026/1' }, headers: { 'idempotent-replayed': 'true' } },
+    ]);
+    const result = fiz.invoices.issue('inv1', { expectedUpdatedAt: '2026-11-24T10:00:00.000Z' });
+    await vi.runAllTimersAsync();
+    await expect(result).resolves.toMatchObject({ number: 'FT 2026/1' });
+    expect(requests).toHaveLength(2);
+  });
+
+  it('does not retry a 409 whose outcome is unknown', async () => {
+    const { fiz, requests } = mockFiz([
+      { status: 409, body: { statusCode: 409, message: 'may have taken effect' } },
+    ]);
+    await expect(fiz.invoices.issue('inv1')).rejects.toBeInstanceOf(FizConflictError);
+    expect(requests).toHaveLength(1);
+  });
+
+  it('retries a 503 on a read but not on a write', async () => {
+    vi.useFakeTimers();
+    const unavailable = { status: 503, body: { statusCode: 503, message: 'unavailable' } };
+    const { fiz, requests } = mockFiz([unavailable, { status: 200, body: {} }, unavailable]);
+    const read = fiz.company.retrieve();
+    await vi.runAllTimersAsync();
+    await expect(read).resolves.toEqual({});
+    await expect(fiz.customers.create(customer)).rejects.toBeInstanceOf(FizServerError);
+    expect(requests).toHaveLength(3);
+  });
+
+  it('does not repeat a non-idempotent POST that got no response', async () => {
+    const { fiz, requests } = mockFiz([new TypeError('fetch failed')]);
+    await expect(fiz.vat.calculate({} as never)).rejects.toBeInstanceOf(FizConnectionError);
+    expect(requests).toHaveLength(1);
+  });
+
+  it('stops when the caller aborts', async () => {
+    const controller = new AbortController();
+    const { fiz } = mockFiz([
+      { status: 429, body: { statusCode: 429, message: 'slow' }, headers: { 'retry-after': '30' } },
+    ]);
+    const result = fiz.company.retrieve({ signal: controller.signal });
+    setTimeout(() => controller.abort(new Error('cancelled')), 10);
+    await expect(result).rejects.toThrow('cancelled');
+  });
+});
+
+describe('pagination', () => {
+  it('walks the pages until an empty one', async () => {
+    const { fiz, requests } = mockFiz([
+      { status: 200, body: [{ id: '1' }, { id: '2' }] },
+      { status: 200, body: [{ id: '3' }] },
+      { status: 200, body: [] },
+    ]);
+    const ids: string[] = [];
+    for await (const invoice of fiz.invoices.listAll({ status: 'ISSUED' as never, pageSize: 2 })) {
+      ids.push(invoice.id!);
+    }
+    expect(ids).toEqual(['1', '2', '3']);
+    expect(requests.map((r) => [r.url.searchParams.get('offset'), r.url.searchParams.get('limit')])).toEqual([
+      ['0', '2'],
+      ['2', '2'],
+      ['3', '2'],
+    ]);
+    expect(requests.every((r) => r.url.searchParams.get('status') === 'ISSUED')).toBe(true);
+  });
+
+  it('walks numbered pages for bank transactions', async () => {
+    const { fiz, requests } = mockFiz([
+      { status: 200, body: [{ id: 't1' }] },
+      { status: 200, body: [] },
+    ]);
+    const all = [];
+    for await (const t of fiz.bank.transactionsAll({ connectionId: 'c1', pageSize: 1 })) all.push(t);
+    expect(all).toHaveLength(1);
+    expect(requests.map((r) => r.url.searchParams.get('page'))).toEqual(['1', '2']);
+  });
+});
+
+describe('PDF download', () => {
+  it('fetches a foreign link without credentials', async () => {
+    const { fiz, requests } = mockFiz([
+      { status: 200, body: { id: 'f1', name: 'FT.pdf', url: 'https://files.example.com/FT.pdf?sig=1' } },
+      { status: 200, body: 'pdf-bytes' },
+    ]);
+    const bytes = await fiz.invoices.downloadPdf('inv1');
+    expect(bytes.byteLength).toBeGreaterThan(0);
+    expect(requests[1]!.url.host).toBe('files.example.com');
+    expect(requests[1]!.headers['x-api-key']).toBeUndefined();
+  });
+});

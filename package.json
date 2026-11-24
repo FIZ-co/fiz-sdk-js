@@ -1,0 +1,75 @@
+{
+  "name": "@fiz-co/sdk",
+  "version": "0.1.0",
+  "description": "Official TypeScript/JavaScript SDK for the FIZ API: issue AT-certified invoices in Portugal (faturação certificada, ATCUD, QR code, SAF-T) from your code.",
+  "keywords": [
+    "fiz",
+    "invoicing",
+    "invoice",
+    "portugal",
+    "faturação",
+    "faturacao certificada",
+    "fatura",
+    "AT",
+    "autoridade tributária",
+    "ATCUD",
+    "SAF-T",
+    "e-fatura",
+    "IVA",
+    "VAT",
+    "api",
+    "sdk"
+  ],
+  "homepage": "https://api.fiz.co",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FIZ-co/fiz-sdk-js.git"
+  },
+  "bugs": "https://github.com/FIZ-co/fiz-sdk-js/issues",
+  "license": "MIT",
+  "author": "FIZ",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "update-spec": "node scripts/update-spec.mjs && npm run generate",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:sandbox": "vitest run --config vitest.sandbox.config.ts",
+    "check": "npm run typecheck && npm test && npm run build",
+    "prepublishOnly": "npm run check"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "openapi-typescript": "7.13.0",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.12"
+  }
+}

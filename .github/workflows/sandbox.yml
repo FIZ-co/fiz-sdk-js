@@ -1,0 +1,25 @@
+name: Sandbox
+
+# The quickstart end to end against the FIZ API sandbox (no fiscal effect).
+# Needs the FIZ_TEST_API_KEY secret (a fiz_test_ key); skips without it.
+on:
+  schedule:
+    - cron: '41 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sandbox:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:sandbox
+        env:
+          FIZ_TEST_API_KEY: ${{ secrets.FIZ_TEST_API_KEY }}

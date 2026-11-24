@@ -1,0 +1,42 @@
+name: Update API spec
+
+# Opens a pull request when https://api.fiz.co/-json changes. The coverage
+# test fails on that PR until every new operation has a resource method.
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run update-spec
+      - name: Open or update the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet; then
+            echo "Spec unchanged"
+            exit 0
+          fi
+          branch=api-spec-update
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git commit -am "chore(spec): update to the current API document"
+          git push --force origin "$branch"
+          gh pr view "$branch" >/dev/null 2>&1 || gh pr create \
+            --head "$branch" \
+            --title "chore(spec): update to the current API document" \
+            --body "The API document at https://api.fiz.co/-json changed. If the coverage test fails, wrap the new operations in a resource method. Check the API changelog: https://api.fiz.co/docs/changelog"
