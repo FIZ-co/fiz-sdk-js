@@ -41,6 +41,12 @@ export interface FizOptions {
   fetch?: typeof fetch;
   /** Your integration's name and version, added to the User-Agent. */
   appInfo?: { name: string; version?: string };
+  /**
+   * Allow running in a browser. Off by default: an API key or access token
+   * acts for the whole company, and in a browser every visitor can read it.
+   * Turn it on only for a page that only its key's owner can open.
+   */
+  dangerouslyAllowBrowser?: boolean;
 }
 
 /** Arguments of `call()`: only the parts the operation takes. */
@@ -67,6 +73,11 @@ export class FizClient {
   private readonly userAgent: string;
 
   constructor(options: FizOptions = {}) {
+    if (isBrowser() && !options.dangerouslyAllowBrowser) {
+      throw new FizError(
+        'The FIZ SDK is for servers: in a browser, every visitor could read the API key or token. Call FIZ from your backend, or pass dangerouslyAllowBrowser: true if only the key owner can open this page.',
+      );
+    }
     if (options.apiKey && options.accessToken) {
       throw new FizError('Pass either apiKey or accessToken, not both.');
     }
@@ -375,4 +386,10 @@ function isRedirect(response: Response): boolean {
 function location(response: Response): string {
   const target = response.headers.get('location');
   return target ? ` to ${target}` : '';
+}
+
+/** A page in a browser (not Node, Deno, Bun or a worker without a document). */
+function isBrowser(): boolean {
+  const scope = globalThis as { window?: unknown; document?: unknown };
+  return typeof scope.window !== 'undefined' && typeof scope.document !== 'undefined';
 }
