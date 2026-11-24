@@ -1,8 +1,13 @@
 name: Release
 
-# Publishes to npm when a version tag (v1.2.3) is pushed, through npm trusted
-# publishing: GitHub's OIDC token proves this workflow to npm, so there is no
-# npm token anywhere, and npm attaches provenance on its own (public repo).
+# Stages a release on npm when a version tag (v1.2.3) is pushed, through npm
+# trusted publishing: GitHub's OIDC token proves this workflow to npm, so
+# there is no npm token anywhere, and npm attaches provenance on its own.
+#
+# Staged, not published: a maintainer approves the version with 2FA on
+# npmjs.com (Staged Packages) or with `npm stage approve <stage-id>` before
+# anyone can install it. A compromised workflow cannot ship a version alone.
+# Trusted publishers on npm allow staging by default; keep it that way.
 #
 # One-time setup, in this order (README, "Releasing"):
 #  1. Publish the first version by hand (`npm publish --access public`): npm
@@ -32,7 +37,7 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org
           cache: npm
-      - name: npm 11 (trusted publishing)
+      - name: npm 11.15+ (trusted publishing, npm stage)
         run: npm install -g npm@11 && npm --version
       - run: npm ci
       - name: Tag matches package.json
@@ -45,7 +50,12 @@ jobs:
             echo "already=true" >> "$GITHUB_OUTPUT"
             echo "::notice::$spec is already on npm; nothing to publish."
           fi
-      - name: Publish
+      - name: Check
         if: steps.published.outputs.already != 'true'
-        # prepublishOnly runs `npm run check` (typecheck, tests, build) first.
-        run: npm publish --access public
+        run: npm run check
+      - name: Stage for approval
+        if: steps.published.outputs.already != 'true'
+        run: |
+          npm stage publish --access public
+          echo "::notice::Staged. Approve it on npmjs.com (Staged Packages) or with npm stage approve."
+

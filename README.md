@@ -243,8 +243,10 @@ trusted publisher only to an existing package: `npm login --auth-type=web &&
 npm publish --access public`, then set up the trusted publisher (top of
 `.github/workflows/release.yml`). After that, bump the version in
 `package.json`, `src/version.ts` and `CHANGELOG.md`, merge, and push a tag
-(`git tag v0.1.1 && git push origin v0.1.1`): the Release workflow publishes
-after `npm run check`, with no token. When the API adds an operation, `npm test` fails until a resource
+(`git tag v0.1.1 && git push origin v0.1.1`): the Release workflow runs
+`npm run check` and stages the version on npm, with no token. It becomes
+installable once a maintainer approves it with 2FA: npmjs.com → Staged
+Packages, or `npm stage list @fiz-co/sdk` and `npm stage approve <stage-id>`. When the API adds an operation, `npm test` fails until a resource
 method wraps it.
 
 ## Português
