@@ -1,5 +1,5 @@
 // Downloads the canonical (English) OpenAPI document into openapi/openapi.json.
-// FIZ_SPEC_URL overrides the source, e.g. a local public-api build.
+// FIZ_SPEC_URL overrides the source, e.g. an API running locally.
 import { writeFileSync } from 'node:fs';
 
 const url = process.env.FIZ_SPEC_URL ?? 'https://api.fiz.co/-json';
