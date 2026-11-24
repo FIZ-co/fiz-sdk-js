@@ -20,9 +20,7 @@ export function mockFiz(replies: Reply[], options: ConstructorParameters<typeof 
     requests.push({
       method: init?.method ?? 'GET',
       url: new URL(String(input)),
-      headers: Object.fromEntries(
-        Object.entries((init?.headers ?? {}) as Record<string, string>).map(([k, v]) => [k.toLowerCase(), v]),
-      ),
+      headers: Object.fromEntries(new Headers(init?.headers).entries()),
       body: typeof init?.body === 'string' ? JSON.parse(init.body) : init?.body,
     });
     const reply = queue.shift();

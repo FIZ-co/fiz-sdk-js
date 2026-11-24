@@ -10,6 +10,7 @@ import {
   FizNotFoundError,
   FizRateLimitError,
   FizServerError,
+  FizTimeoutError,
 } from '../src/index.js';
 import { mockFiz } from './helpers.js';
 
@@ -117,6 +118,12 @@ describe('Idempotency-Key', () => {
     expect(requests[0]!.headers['idempotency-key']).toBe('order-1042-customer');
   });
 
+  it('takes a caller’s Idempotency-Key header, in any case, as the key', async () => {
+    const { fiz, requests } = mockFiz([{ status: 201, body: {} }]);
+    await fiz.customers.create(customer, { headers: { 'Idempotency-Key': 'order-7' } });
+    expect(requests[0]!.headers['idempotency-key']).toBe('order-7');
+  });
+
   it('is not sent on a read, nor on an operation that does not take one', async () => {
     const { fiz, requests } = mockFiz([
       { status: 200, body: [] },
@@ -186,6 +193,36 @@ describe('retries', () => {
     await vi.advanceTimersByTimeAsync(1);
     await expect(result).resolves.toEqual({ id: 'c1' });
     expect(requests[1]!.headers['idempotency-key']).toBe(requests[0]!.headers['idempotency-key']);
+  });
+
+  it('does not wait out a Retry-After longer than a minute', async () => {
+    const { fiz, requests } = mockFiz([
+      { status: 429, body: { statusCode: 429, message: 'slow down' }, headers: { 'retry-after': '3600' } },
+    ]);
+    await expect(fiz.company.retrieve()).rejects.toBeInstanceOf(FizRateLimitError);
+    expect(requests).toHaveLength(1);
+  });
+
+  it('reports a timeout, after retrying it', async () => {
+    vi.useFakeTimers();
+    const timeout = new DOMException('The operation timed out.', 'TimeoutError');
+    const { fiz, requests } = mockFiz([timeout, timeout, timeout]);
+    const result = fiz.customers.create(customer, { idempotencyKey: 'k1' }).catch((e: unknown) => e);
+    await vi.runAllTimersAsync();
+    const error = await result;
+    expect(error).toBeInstanceOf(FizTimeoutError);
+    expect(error).toMatchObject({ idempotencyKey: 'k1' });
+    expect(requests).toHaveLength(3);
+  });
+
+  it('throws the conflict when a write is still in progress after every retry', async () => {
+    vi.useFakeTimers();
+    const busy = { status: 409, body: { statusCode: 409, message: 'still being processed' }, headers: { 'retry-after': '1' } };
+    const { fiz, requests } = mockFiz([busy, busy, busy]);
+    const result = fiz.invoices.issue('inv1').catch((e: unknown) => e);
+    await vi.runAllTimersAsync();
+    expect(await result).toBeInstanceOf(FizConflictError);
+    expect(requests).toHaveLength(3);
   });
 
   it('gives up after maxRetries', async () => {
@@ -286,6 +323,20 @@ describe('pagination', () => {
 });
 
 describe('PDF download', () => {
+  it('sends credentials to a link on the API origin only', async () => {
+    const { fiz, requests } = mockFiz([
+      { status: 200, body: { id: 'f1', name: 'FT.pdf', url: 'https://api.fiz.co/files/FT.pdf' } },
+      { status: 200, body: 'pdf-bytes' },
+    ]);
+    await fiz.invoices.downloadPdf('inv1');
+    expect(requests[1]!.headers['x-api-key']).toBe('fiz_live_key');
+  });
+
+  it('raises a FizError when the API gives no link', async () => {
+    const { fiz } = mockFiz([{ status: 200, body: { id: 'f1', name: null, url: null } }]);
+    await expect(fiz.invoices.downloadPdf('inv1')).rejects.toBeInstanceOf(FizError);
+  });
+
   it('fetches a foreign link without credentials', async () => {
     const { fiz, requests } = mockFiz([
       { status: 200, body: { id: 'f1', name: 'FT.pdf', url: 'https://files.example.com/FT.pdf?sig=1' } },

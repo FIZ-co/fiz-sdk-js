@@ -134,7 +134,7 @@ await fiz.invoices.create(draft, { idempotencyKey: `order-${order.id}-invoice` }
 The SDK retries (default `maxRetries: 2`) only what is safe to repeat:
 
 - no response at all, on a read or a write carrying a key;
-- `429`, after `Retry-After`;
+- `429`, after `Retry-After` (a wait longer than a minute is not taken: the error is thrown);
 - `409` with `Retry-After`: the first attempt is still running, and the same
   key returns its result;
 - `502`, `503`, `504` on a read.

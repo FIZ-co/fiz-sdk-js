@@ -1,13 +1,12 @@
 import type { FizClient } from '../client.js';
+import { FizError } from '../errors.js';
 
 export abstract class Resource {
   constructor(protected readonly client: FizClient) {}
 }
 
-/** List query without the paging parameters, which `listAll` drives itself. */
-export type ListAllQuery<Q> = Omit<Q, 'offset' | 'limit'> & {
-  /** Records per request while walking the pages (default 100). */
-  pageSize?: number;
-};
-
-export const DEFAULT_PAGE_SIZE = 100;
+/** The link a `pdf` call returned, or an error when the API sent none. */
+export function requireUrl(url: string | null | undefined, id: string): string {
+  if (!url) throw new FizError(`The API returned no PDF link for ${id}`);
+  return url;
+}
