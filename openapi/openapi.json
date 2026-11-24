@@ -37,6 +37,15 @@
                   "$ref": "#/components/schemas/ScheduledInvoiceResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -204,6 +213,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -279,6 +297,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ScheduledInvoiceResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -375,6 +402,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ScheduledInvoiceResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -519,6 +555,15 @@
                   "$ref": "#/components/schemas/DeleteInvoiceResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "401": {
@@ -645,6 +690,15 @@
                   "$ref": "#/components/schemas/CreateInvoiceResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -719,6 +773,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -962,6 +1042,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -998,6 +1087,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -1051,6 +1166,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateCreditNoteResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -1149,6 +1273,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1211,6 +1361,15 @@
                   "$ref": "#/components/schemas/CreateInvoiceResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -1307,6 +1466,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1344,6 +1529,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InvoiceResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -1404,6 +1598,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1451,6 +1671,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DeleteInvoiceResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -1546,6 +1775,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -1608,6 +1863,15 @@
                   "$ref": "#/components/schemas/IssueInvoiceResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -1682,6 +1946,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -1746,6 +2036,15 @@
                   "$ref": "#/components/schemas/PayInvoiceResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -1842,6 +2141,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1899,6 +2224,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CancelInvoiceResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -1978,6 +2312,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2052,6 +2412,15 @@
                   "$ref": "#/components/schemas/DownloadInvoicePdfResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -2110,6 +2479,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2155,7 +2550,23 @@
         },
         "responses": {
           "201": {
-            "description": "Draft transport document created successfully"
+            "description": "Draft transport document created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransportDocumentResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid data",
@@ -2229,6 +2640,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -2328,7 +2765,26 @@
         ],
         "responses": {
           "200": {
-            "description": "List of transport documents returned successfully"
+            "description": "List of transport documents returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransportDocumentResponseDto"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid parameters",
@@ -2364,6 +2820,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -2422,7 +2904,23 @@
         },
         "responses": {
           "200": {
-            "description": "Transport document updated successfully"
+            "description": "Transport document updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransportDocumentResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid data or transport document already issued",
@@ -2518,6 +3016,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2550,7 +3074,23 @@
         ],
         "responses": {
           "200": {
-            "description": "Transport document found"
+            "description": "Transport document found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransportDocumentResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized - API key missing or invalid",
@@ -2586,6 +3126,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -2631,7 +3197,23 @@
         ],
         "responses": {
           "200": {
-            "description": "Transport document deleted successfully"
+            "description": "Transport document deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransportDocumentResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
           },
           "400": {
             "description": "Transport document already issued — cannot be deleted",
@@ -2727,6 +3309,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2781,7 +3389,23 @@
         },
         "responses": {
           "200": {
-            "description": "Transport document issued successfully"
+            "description": "Transport document issued successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransportDocumentResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
           },
           "400": {
             "description": "Transport document invalid, already issued, loading time already passed or postal code invalid",
@@ -2877,6 +3501,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2921,7 +3571,23 @@
         ],
         "responses": {
           "200": {
-            "description": "Transport document cancelled successfully"
+            "description": "Transport document cancelled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransportDocumentResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
           },
           "400": {
             "description": "Transport document not issued or already cancelled",
@@ -3017,6 +3683,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -3069,6 +3761,15 @@
                   "$ref": "#/components/schemas/DownloadTransportDocumentPdfResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "401": {
@@ -3105,6 +3806,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -3158,6 +3885,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProposalResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -3344,6 +4080,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -3419,6 +4164,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProposalResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -3504,6 +4258,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DeleteProposalResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -3648,6 +4411,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProposalResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -3805,6 +4577,15 @@
                   "$ref": "#/components/schemas/DownloadProposalPdfResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "401": {
@@ -3893,6 +4674,15 @@
                   "$ref": "#/components/schemas/CreateCustomerResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -3967,6 +4757,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -4224,6 +5040,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -4260,6 +5085,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -4302,6 +5153,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateCustomerResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -4359,6 +5219,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -4422,6 +5308,15 @@
                   "$ref": "#/components/schemas/CreateCustomerResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -4499,6 +5394,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -4546,6 +5467,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateCustomerResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -4641,6 +5571,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -4695,6 +5651,15 @@
                   "$ref": "#/components/schemas/CreateCustomerResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -4788,6 +5753,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -4843,6 +5834,15 @@
                   "$ref": "#/components/schemas/CreateItemResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -4917,6 +5917,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -5170,6 +6196,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -5206,6 +6241,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -5248,6 +6309,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateItemResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -5305,6 +6375,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -5366,6 +6462,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateItemResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -5445,6 +6550,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -5492,6 +6623,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateItemResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -5590,6 +6730,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -5647,6 +6813,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "401": {
@@ -5664,6 +6839,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -5714,6 +6915,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TemplateDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -5793,6 +7003,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -5826,6 +7062,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "401": {
@@ -5843,6 +7088,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -5879,6 +7150,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "401": {
@@ -5896,6 +7176,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -5940,6 +7246,15 @@
                   "$ref": "#/components/schemas/TemplateStarterDataDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -5976,6 +7291,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -6019,6 +7360,15 @@
                   "$ref": "#/components/schemas/TemplateValidationDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "401": {
@@ -6036,6 +7386,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -6079,6 +7455,15 @@
                   "$ref": "#/components/schemas/TemplatePreviewResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -6115,6 +7500,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -6157,6 +7568,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TemplateDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -6217,6 +7637,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6274,6 +7720,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TemplateDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -6391,6 +7846,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6438,6 +7919,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DeleteTemplateResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -6536,6 +8026,32 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6569,6 +8085,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "401": {
@@ -6586,6 +8111,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -6620,6 +8171,15 @@
                   "items": {
                     "$ref": "#/components/schemas/BankConnectionResponseDto"
                   }
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -6803,6 +8363,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -6929,6 +8498,15 @@
                   "$ref": "#/components/schemas/ExpenseStatsResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -6965,6 +8543,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -7105,6 +8709,15 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -7141,6 +8754,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -7183,6 +8822,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CalculateVatResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
                 }
               }
             }
@@ -7281,6 +8929,15 @@
                   "$ref": "#/components/schemas/ValidateClientVatResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -7344,6 +9001,41 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CompanyResponseDto"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -7413,6 +9105,15 @@
                   "$ref": "#/components/schemas/ExportSaftPtResponseDto"
                 }
               }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
             }
           },
           "400": {
@@ -7468,6 +9169,32 @@
                 "schema": {
                   "type": "string",
                   "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before repeating the request",
+                "schema": {
+                  "type": "integer",
+                  "example": 30
+                }
+              },
+              "X-Request-Id": {
+                "description": "Request identifier. Quote it when contacting support about this request.",
+                "schema": {
+                  "type": "string",
+                  "example": "4bf92f3577b34da6a3ce929d0e0e4736"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
                 }
               }
             }
@@ -7906,7 +9633,8 @@
             "description": "Global discount type",
             "enum": [
               "AMOUNT",
-              "PERCENT"
+              "PERCENT",
+              null
             ],
             "example": null,
             "nullable": true
@@ -8116,6 +9844,11 @@
           },
           "noteChangeKind": {
             "type": "string",
+            "enum": [
+              "QUANTITY",
+              "PRICE",
+              null
+            ],
             "description": "Only on the lines of partial credit/debit notes: what the line changes on the corrected invoice line — the quantity (QUANTITY) or the unit price (PRICE). Absent on other lines and on older notes.",
             "example": "QUANTITY",
             "nullable": true
@@ -8254,10 +9987,16 @@
           },
           "autoSendEmails": {
             "description": "Recipients of the automatic sending",
-            "nullable": true,
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/InvoiceScheduleAutoSendEmailsResponseDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -8328,10 +10067,16 @@
           },
           "series": {
             "description": "Series the documents are issued in",
-            "nullable": true,
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SeriesDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -8626,6 +10371,25 @@
           "items"
         ]
       },
+      "LegacyPaymentDto": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "description": "Payment method",
+            "example": "bankTransfer"
+          },
+          "date": {
+            "type": "string",
+            "description": "Payment date",
+            "example": "2025-11-04T07:00:00.000Z"
+          }
+        },
+        "required": [
+          "method",
+          "date"
+        ]
+      },
       "CreateInvoiceResponseDto": {
         "type": "object",
         "properties": {
@@ -8662,6 +10426,12 @@
             "description": "Invoice status",
             "example": "ISSUED"
           },
+          "updatedAt": {
+            "type": "string",
+            "description": "Draft revision (updatedAt). Send it as expectedUpdatedAt when issuing: a draft changed in the meantime is refused.",
+            "format": "date-time",
+            "example": "2025-10-28T11:58:01.936Z"
+          },
           "notes": {
             "type": "string",
             "description": "Invoice notes",
@@ -8677,10 +10447,20 @@
             ]
           },
           "payment": {
-            "type": "object",
             "description": "Payment",
             "example": null,
-            "nullable": true
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LegacyPaymentDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
+              }
+            ]
           },
           "customer": {
             "description": "Customer",
@@ -8722,6 +10502,7 @@
           "shortHash",
           "documentType",
           "status",
+          "updatedAt",
           "notes",
           "series",
           "payment",
@@ -8843,13 +10624,13 @@
           },
           "number": {
             "type": "string",
-            "description": "Número da nota de crédito. Null quando é criada como rascunho (issue: false) — é atribuído na emissão.",
+            "description": "Credit note number. Null when created as a draft (issue: false); assigned on issue.",
             "example": "NC FIZ2026/12",
             "nullable": true
           },
           "atcud": {
             "type": "string",
-            "description": "Código único do documento (ATCUD). Null quando é criada como rascunho (issue: false) — é atribuído na emissão.",
+            "description": "Unique document code (ATCUD). Null when created as a draft (issue: false); assigned on issue.",
             "example": "J6BR42T7-12",
             "nullable": true
           },
@@ -9136,10 +10917,20 @@
             ]
           },
           "payment": {
-            "type": "object",
             "description": "Payment",
             "example": null,
-            "nullable": true
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LegacyPaymentDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
+              }
+            ]
           },
           "customer": {
             "description": "Customer",
@@ -9228,25 +11019,6 @@
             "minimum": 0.01,
             "multipleOf": 0.01,
             "example": 123.45
-          }
-        },
-        "required": [
-          "method",
-          "date"
-        ]
-      },
-      "LegacyPaymentDto": {
-        "type": "object",
-        "properties": {
-          "method": {
-            "type": "string",
-            "description": "Payment method",
-            "example": "bankTransfer"
-          },
-          "date": {
-            "type": "string",
-            "description": "Payment date",
-            "example": "2025-11-04T07:00:00.000Z"
           }
         },
         "required": [
@@ -9428,10 +11200,16 @@
           },
           "payment": {
             "description": "Legacy field, populated only once the invoice is fully paid. On a partial payment it is null — use `payments`.",
-            "nullable": true,
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/LegacyPaymentDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -9444,10 +11222,16 @@
           },
           "receipt": {
             "description": "Receipt (RG) issued by this payment, carrying the id needed to download its PDF from GET /invoices/{id}/pdf. On a partial payment this is the receipt for this payment, not an earlier one. Null for AT-imported invoices, for which no receipt is issued.",
-            "nullable": true,
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/PayInvoiceReceiptDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -9551,10 +11335,16 @@
           },
           "syncWithAt": {
             "description": "AT synchronization status",
-            "nullable": true,
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SyncWithAtDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           }
@@ -10084,10 +11874,16 @@
           },
           "series": {
             "description": "Series",
-            "nullable": true,
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SeriesDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -10743,7 +12539,8 @@
               "PACKAGE",
               "SQUARE_METER",
               "UNIT",
-              "WEEK"
+              "WEEK",
+              null
             ],
             "example": "UNIT",
             "nullable": true
@@ -10753,7 +12550,8 @@
             "description": "Default discount type for the catalogue item",
             "enum": [
               "AMOUNT",
-              "PERCENT"
+              "PERCENT",
+              null
             ],
             "example": "PERCENT",
             "nullable": true
@@ -10777,7 +12575,8 @@
               "EXEMPT",
               "INTERMEDIATE",
               "NORMAL",
-              "REDUCED"
+              "REDUCED",
+              null
             ],
             "example": "NORMAL",
             "nullable": true
@@ -10789,7 +12588,8 @@
               "AZORES",
               "CONTINENTAL",
               "MADEIRA",
-              "UNKNOWN"
+              "UNKNOWN",
+              null
             ],
             "example": "CONTINENTAL",
             "nullable": true
@@ -10824,7 +12624,8 @@
             "enum": [
               "IRC",
               "IRS",
-              "IS"
+              "IS",
+              null
             ],
             "example": "IRS",
             "nullable": true
@@ -11013,7 +12814,8 @@
             "deprecated": true,
             "enum": [
               "AMOUNT",
-              "PERCENT"
+              "PERCENT",
+              null
             ],
             "example": "PERCENT",
             "nullable": true
@@ -11525,27 +13327,39 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "object",
+            "type": "string",
             "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
           },
           "kind": {
-            "type": "object",
-            "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
+            "type": "string",
+            "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is.",
+            "enum": [
+              "INVOICE",
+              "TRANSPORT_DOCUMENT"
+            ]
           },
           "format": {
-            "type": "object",
-            "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
+            "type": "string",
+            "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is.",
+            "enum": [
+              "A4",
+              "RECEIPT",
+              "RECEIPT_58"
+            ]
           },
           "fiscal": {
-            "type": "object",
+            "type": "boolean",
             "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
           },
           "documentTypes": {
-            "type": "object",
-            "description": "On import of a template without starterId: if it includes CREDIT_NOTE or DEBIT_NOTE, asks that the template print credit and debit notes. Granted only if the template prints the reference to the rectified document. Ignored with starterId and on replace."
+            "description": "On import of a template without starterId: if it includes CREDIT_NOTE or DEBIT_NOTE, asks that the template print credit and debit notes. Granted only if the template prints the reference to the rectified document. Ignored with starterId and on replace.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "updatedAt": {
-            "type": "object",
+            "type": "string",
             "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
           },
           "name": {
@@ -11594,27 +13408,39 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "object",
+            "type": "string",
             "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
           },
           "kind": {
-            "type": "object",
-            "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
+            "type": "string",
+            "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is.",
+            "enum": [
+              "INVOICE",
+              "TRANSPORT_DOCUMENT"
+            ]
           },
           "format": {
-            "type": "object",
-            "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
+            "type": "string",
+            "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is.",
+            "enum": [
+              "A4",
+              "RECEIPT",
+              "RECEIPT_58"
+            ]
           },
           "fiscal": {
-            "type": "object",
+            "type": "boolean",
             "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
           },
           "documentTypes": {
-            "type": "object",
-            "description": "On import of a template without starterId: if it includes CREDIT_NOTE or DEBIT_NOTE, asks that the template print credit and debit notes. Granted only if the template prints the reference to the rectified document. Ignored with starterId and on replace."
+            "description": "On import of a template without starterId: if it includes CREDIT_NOTE or DEBIT_NOTE, asks that the template print credit and debit notes. Granted only if the template prints the reference to the rectified document. Ignored with starterId and on replace.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "updatedAt": {
-            "type": "object",
+            "type": "string",
             "description": "Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is."
           },
           "name": {
@@ -11648,7 +13474,7 @@
             ]
           },
           "starterId": {
-            "type": "object",
+            "type": "string",
             "description": "Ignored on replace: a template's origin does not change. Accepted so an export can be sent as is."
           }
         },
@@ -11983,7 +13809,8 @@
             "enum": [
               "AUTO",
               "USER",
-              "PORTAL"
+              "PORTAL",
+              null
             ],
             "nullable": true
           },
@@ -11992,7 +13819,8 @@
             "description": "Business or personal expense",
             "enum": [
               "BUSINESS",
-              "PERSONAL"
+              "PERSONAL",
+              null
             ],
             "nullable": true
           },
@@ -12017,7 +13845,8 @@
               "TELECOMMUNICATIONS",
               "TRANSPORT",
               "TRAVEL",
-              "VEHICLE"
+              "VEHICLE",
+              null
             ],
             "nullable": true
           },
@@ -12040,7 +13869,8 @@
               "PUBLIC_TRANSPORT",
               "RESTAURANT",
               "VEHICLE_REPAIR",
-              "VETERINARY"
+              "VETERINARY",
+              null
             ],
             "nullable": true
           },
@@ -12092,7 +13922,8 @@
               "CAMPO_24",
               "REVERSE_CHARGE_EU",
               "REVERSE_CHARGE_NON_EU",
-              "ZERO"
+              "ZERO",
+              null
             ],
             "nullable": true
           },
@@ -12117,7 +13948,8 @@
               "CATALOG_UNMAPPED",
               "NO_INPUT_VAT",
               "REGIME_ART9_EXEMPT",
-              "REGIME_ART53_EXEMPT"
+              "REGIME_ART53_EXEMPT",
+              null
             ],
             "nullable": true
           }
@@ -12179,10 +14011,16 @@
           },
           "conflict": {
             "description": "FIZ and the e-Fatura portal hold different answers and it is unknown which is newer; a person picks one in the app",
-            "nullable": true,
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/ExpenseEfaturaConflictDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -12293,10 +14131,16 @@
           },
           "vatDeduction": {
             "description": "Deductible VAT computed by the VAT return engine. Null when there is nothing to deduct (not categorised, personal expense).",
-            "nullable": true,
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/ExpenseVatDeductionDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -12543,7 +14387,8 @@
               "SMALL_RETAILERS",
               "SPECIAL_SCHEME",
               "STANDARD_MONTHLY",
-              "STANDARD_QUARTERLY"
+              "STANDARD_QUARTERLY",
+              null
             ],
             "nullable": true
           },
@@ -12688,11 +14533,17 @@
             }
           },
           "installation": {
-            "nullable": true,
             "description": "The company/application connection behind an OAuth token. A revoked authorization answers 401 instead, so a returned installation is always connected. Absent for API keys.",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/InstallationDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -12784,9 +14635,6 @@
       },
       "InvoiceListItemResponseDto": {
         "type": "object",
-        "required": [
-          "taxPointDate"
-        ],
         "properties": {
           "id": {
             "type": "string",
@@ -12794,11 +14642,13 @@
           },
           "number": {
             "type": "string",
-            "example": "FT 2025/001"
+            "example": "FT 2025/001",
+            "nullable": true
           },
           "documentType": {
             "type": "string",
-            "example": "INVOICE"
+            "example": "INVOICE",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -12807,7 +14657,8 @@
           "date": {
             "type": "string",
             "format": "date-time",
-            "example": "2025-10-30T10:41:53.097Z"
+            "example": "2025-10-30T10:41:53.097Z",
+            "nullable": true
           },
           "taxPointDate": {
             "type": "string",
@@ -12819,11 +14670,13 @@
           "dueDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2025-11-30T10:41:53.097Z"
+            "example": "2025-11-30T10:41:53.097Z",
+            "nullable": true
           },
           "currency": {
             "type": "string",
-            "example": "EUR"
+            "example": "EUR",
+            "nullable": true
           },
           "parentInvoiceId": {
             "type": "string",
@@ -12860,48 +14713,88 @@
             "type": "object",
             "properties": {
               "amountWithoutTax": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "amountWithTax": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "taxAmount": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "total": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               }
-            }
+            },
+            "nullable": true,
+            "required": [
+              "amountWithoutTax",
+              "amountWithTax",
+              "taxAmount",
+              "total"
+            ]
           },
           "customer": {
             "type": "object",
             "properties": {
               "ref": {
-                "type": "string"
+                "type": "string",
+                "nullable": true
               },
               "data": {
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "taxpayerNumber": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   }
-                }
+                },
+                "nullable": true,
+                "required": [
+                  "name",
+                  "taxpayerNumber",
+                  "email"
+                ]
               }
-            }
+            },
+            "nullable": true,
+            "required": [
+              "ref",
+              "data"
+            ]
           }
-        }
+        },
+        "required": [
+          "id",
+          "number",
+          "documentType",
+          "status",
+          "date",
+          "taxPointDate",
+          "dueDate",
+          "currency",
+          "parentInvoiceId",
+          "parentInvoiceNumber",
+          "parentInvoiceDate",
+          "parentInvoiceType",
+          "scheduleTemplateId",
+          "summary",
+          "customer"
+        ]
       },
       "InvoiceResponseDto": {
         "type": "object",
-        "required": [
-          "taxPointDate"
-        ],
         "properties": {
           "id": {
             "type": "string",
@@ -12909,17 +14802,21 @@
           },
           "number": {
             "type": "string",
-            "example": "FT 2025/001"
+            "example": "FT 2025/001",
+            "nullable": true
           },
           "atcud": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "shortHash": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "documentType": {
             "type": "string",
-            "example": "INVOICE"
+            "example": "INVOICE",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -12928,12 +14825,14 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Draft revision to pass as expectedUpdatedAt when issuing."
+            "description": "Draft revision to pass as expectedUpdatedAt when issuing.",
+            "nullable": true
           },
           "date": {
             "type": "string",
             "format": "date-time",
-            "example": "2025-10-30T10:41:53.097Z"
+            "example": "2025-10-30T10:41:53.097Z",
+            "nullable": true
           },
           "taxPointDate": {
             "type": "string",
@@ -12945,30 +14844,37 @@
           "dueDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2025-11-30T10:41:53.097Z"
+            "example": "2025-11-30T10:41:53.097Z",
+            "nullable": true
           },
           "currency": {
             "type": "string",
-            "example": "EUR"
+            "example": "EUR",
+            "nullable": true
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "notes": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "cae": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "example": "2025-10-30T10:41:53.097Z"
+            "example": "2025-10-30T10:41:53.097Z",
+            "nullable": true
           },
           "issuedAt": {
             "type": "string",
             "format": "date-time",
-            "example": "2025-10-30T10:41:53.097Z"
+            "example": "2025-10-30T10:41:53.097Z",
+            "nullable": true
           },
           "parentInvoiceId": {
             "type": "string",
@@ -13040,117 +14946,200 @@
                     "remaining": {
                       "type": "number"
                     }
-                  }
+                  },
+                  "required": [
+                    "vatRate",
+                    "taxRate",
+                    "exemptionCode",
+                    "base",
+                    "remaining"
+                  ]
                 }
               }
-            }
+            },
+            "required": [
+              "total",
+              "deducted",
+              "refunded",
+              "remaining",
+              "byRate"
+            ]
           },
           "syncWithAt": {
             "type": "object",
             "properties": {
               "status": {
-                "type": "string"
+                "type": "string",
+                "nullable": true
               },
               "atCode": {
-                "type": "string"
+                "type": "string",
+                "nullable": true
               },
               "atMessage": {
-                "type": "string"
+                "type": "string",
+                "nullable": true
               }
-            }
+            },
+            "nullable": true,
+            "required": [
+              "status",
+              "atCode",
+              "atMessage"
+            ]
           },
           "series": {
             "type": "object",
             "properties": {
               "ref": {
-                "type": "string"
+                "type": "string",
+                "nullable": true
               },
               "name": {
-                "type": "string"
+                "type": "string",
+                "nullable": true
               }
-            }
+            },
+            "nullable": true,
+            "required": [
+              "ref",
+              "name"
+            ]
           },
           "customer": {
             "type": "object",
             "properties": {
               "ref": {
-                "type": "string"
+                "type": "string",
+                "nullable": true
               },
               "data": {
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "taxpayerNumber": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "address": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "postalCode": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "city": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "country": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   },
                   "mobile": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   }
-                }
+                },
+                "nullable": true,
+                "required": [
+                  "name",
+                  "taxpayerNumber",
+                  "email",
+                  "address",
+                  "postalCode",
+                  "city",
+                  "country",
+                  "phone",
+                  "mobile"
+                ]
               }
-            }
+            },
+            "nullable": true,
+            "required": [
+              "ref",
+              "data"
+            ]
           },
           "summary": {
             "type": "object",
             "properties": {
               "amountWithoutTax": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "amountWithTax": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "amountWithoutTaxWithoutDiscount": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "taxAmount": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "globalDiscountType": {
                 "type": "string",
                 "enum": [
                   "PERCENT",
-                  "AMOUNT"
-                ]
+                  "AMOUNT",
+                  null
+                ],
+                "nullable": true
               },
               "globalDiscountPercent": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "globalDiscountAmount": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "total": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "totalToPay": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "withholdingTaxAmount": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               },
               "creditNotesTotal": {
-                "type": "number"
+                "type": "number",
+                "nullable": true
               }
-            }
+            },
+            "nullable": true,
+            "required": [
+              "amountWithoutTax",
+              "amountWithTax",
+              "amountWithoutTaxWithoutDiscount",
+              "taxAmount",
+              "globalDiscountType",
+              "globalDiscountPercent",
+              "globalDiscountAmount",
+              "total",
+              "totalToPay",
+              "withholdingTaxAmount",
+              "creditNotesTotal"
+            ]
           },
           "items": {
             "type": "array",
@@ -13161,89 +15150,160 @@
                   "type": "string"
                 },
                 "ref": {
-                  "type": "string"
+                  "type": "string",
+                  "nullable": true
+                },
+                "noteChangeKind": {
+                  "type": "string",
+                  "enum": [
+                    "QUANTITY",
+                    "PRICE",
+                    null
+                  ],
+                  "description": "Only on the lines of partial credit/debit notes: what the line changes on the corrected invoice line — the quantity (QUANTITY) or the unit price (PRICE). Absent on other lines and on older notes.",
+                  "example": "QUANTITY",
+                  "nullable": true
+                },
+                "noteChangeFrom": {
+                  "type": "number",
+                  "description": "With noteChangeKind: the quantity or unit price of the invoice line before this note.",
+                  "nullable": true
+                },
+                "noteChangeTo": {
+                  "type": "number",
+                  "description": "With noteChangeKind: the quantity or unit price of the invoice line after this note.",
+                  "nullable": true
                 },
                 "meta": {
                   "type": "object",
                   "properties": {
                     "quantity": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "amountWithoutTax": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "amountWithTax": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "taxAmount": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "discountAmount": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "unitItemDiscountPercent": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "unitItemDiscountAmount": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "unitDiscountPercent": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "unitDiscountAmount": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "unitAmountWithoutTax": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "unitAmountWithTax": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "withholdingTaxAmount": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "withholdingTaxEnabled": {
-                      "type": "boolean"
+                      "type": "boolean",
+                      "nullable": true
                     }
-                  }
+                  },
+                  "nullable": true,
+                  "required": [
+                    "quantity",
+                    "amountWithoutTax",
+                    "amountWithTax",
+                    "taxAmount",
+                    "discountAmount",
+                    "unitItemDiscountPercent",
+                    "unitItemDiscountAmount",
+                    "unitDiscountPercent",
+                    "unitDiscountAmount",
+                    "unitAmountWithoutTax",
+                    "unitAmountWithTax",
+                    "withholdingTaxAmount",
+                    "withholdingTaxEnabled"
+                  ]
                 },
                 "data": {
                   "type": "object",
                   "properties": {
                     "name": {
-                      "type": "string"
+                      "type": "string",
+                      "nullable": true
                     },
                     "description": {
-                      "type": "string"
+                      "type": "string",
+                      "nullable": true
                     },
                     "type": {
                       "type": "string"
                     },
                     "unitPrice": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "vatRate": {
-                      "type": "string"
+                      "type": "string",
+                      "nullable": true
                     },
                     "unitDiscountType": {
                       "type": "string",
                       "enum": [
                         "PERCENT",
-                        "AMOUNT"
-                      ]
+                        "AMOUNT",
+                        null
+                      ],
+                      "nullable": true
                     },
                     "unitDiscountPercent": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     },
                     "unitDiscountAmount": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true
                     }
-                  }
+                  },
+                  "nullable": true,
+                  "required": [
+                    "name",
+                    "description",
+                    "type",
+                    "unitPrice",
+                    "vatRate",
+                    "unitDiscountType",
+                    "unitDiscountPercent",
+                    "unitDiscountAmount"
+                  ]
                 },
                 "kind": {
                   "type": "string",
                   "enum": [
-                    "ADVANCE_DEDUCTION"
+                    "ADVANCE_DEDUCTION",
+                    null
                   ],
                   "nullable": true,
                   "description": "ADVANCE_DEDUCTION: an advance deduction line. Its amounts are negative, it belongs to the item line parentItemId of the same document and has no catalogue item (ref). Do not copy it into a new draft or list it in a partial credit note. Absent on ordinary lines."
@@ -13272,31 +15332,59 @@
                     "paymentDate": {
                       "type": "string",
                       "format": "date-time",
-                      "description": "Payment date of the advance: the FR date, or the date of the receipt that paid the FT (without one, the FT date)."
+                      "nullable": true,
+                      "description": "Payment date of the advance: the FR's own date, or the date of the FT's latest receipt or recorded payment. null on an FT with no recorded payment."
                     }
-                  }
+                  },
+                  "required": [
+                    "invoiceId",
+                    "number",
+                    "date",
+                    "paymentDate"
+                  ]
                 }
-              }
-            }
+              },
+              "required": [
+                "id",
+                "ref",
+                "noteChangeKind",
+                "noteChangeFrom",
+                "noteChangeTo",
+                "meta",
+                "data",
+                "kind",
+                "parentItemId",
+                "advanceRef"
+              ]
+            },
+            "nullable": true
           },
           "payment": {
             "type": "object",
             "properties": {
               "method": {
-                "type": "string"
+                "type": "string",
+                "nullable": true
               },
               "date": {
                 "type": "string",
                 "format": "date-time",
-                "example": "2025-10-30T10:41:53.097Z"
+                "example": "2025-10-30T10:41:53.097Z",
+                "nullable": true
               }
-            }
+            },
+            "nullable": true,
+            "required": [
+              "method",
+              "date"
+            ]
           },
           "qrCode": {
             "type": "object",
             "properties": {
               "url": {
-                "type": "string"
+                "type": "string",
+                "nullable": true
               },
               "data": {
                 "type": "string"
@@ -13304,7 +15392,239 @@
               "imageData": {
                 "type": "string"
               }
-            }
+            },
+            "nullable": true,
+            "required": [
+              "url",
+              "data",
+              "imageData"
+            ]
+          },
+          "issuer": {
+            "type": "object",
+            "properties": {
+              "ref": {
+                "type": "string",
+                "nullable": true
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "taxPayerNumber": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "address": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "city": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "postalCode": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "country": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "nullable": true,
+                "required": [
+                  "name",
+                  "taxPayerNumber",
+                  "address",
+                  "city",
+                  "postalCode",
+                  "country"
+                ]
+              }
+            },
+            "nullable": true,
+            "required": [
+              "ref",
+              "data"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "atcud",
+          "shortHash",
+          "documentType",
+          "status",
+          "updatedAt",
+          "date",
+          "taxPointDate",
+          "dueDate",
+          "currency",
+          "description",
+          "notes",
+          "cae",
+          "createdAt",
+          "issuedAt",
+          "parentInvoiceId",
+          "parentInvoiceNumber",
+          "parentInvoiceDate",
+          "parentInvoiceType",
+          "isAdvance",
+          "advanceBalance",
+          "syncWithAt",
+          "series",
+          "customer",
+          "summary",
+          "items",
+          "payment",
+          "qrCode",
+          "issuer"
+        ]
+      },
+      "TransportDocumentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "6900afc7e9a04d2adc897c68"
+          },
+          "documentNumber": {
+            "type": "string",
+            "description": "Document number. On a draft, a provisional number.",
+            "example": "GT FIZ2026/12"
+          },
+          "atcud": {
+            "type": "string",
+            "description": "Unique document code (ATCUD). Null until issued.",
+            "nullable": true
+          },
+          "atDocCodeID": {
+            "type": "string",
+            "description": "Identification code the AT assigns when the document is reported. Null until issued.",
+            "nullable": true
+          },
+          "atWarning": {
+            "type": "string",
+            "description": "Warning the AT returned when the document was reported, if any.",
+            "nullable": true
+          },
+          "movementType": {
+            "type": "string",
+            "enum": [
+              "GUIA_DE_REMESSA",
+              "GUIA_DE_TRANSPORTE",
+              "GUIA_DE_ATIVOS_PROPRIOS",
+              "GUIA_DE_CONSIGNACAO",
+              "GUIA_DE_DEVOLUCAO"
+            ],
+            "description": "Transport document type (GR, GT, GA, GC, GD)"
+          },
+          "movementStatus": {
+            "type": "string",
+            "enum": [
+              "N",
+              "T",
+              "A"
+            ],
+            "description": "SAF-T status: N normal, T invoiced, A cancelled"
+          },
+          "issueStatus": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ISSUED",
+              "CANCELED"
+            ],
+            "description": "Draft, issued (reported to the AT) or cancelled"
+          },
+          "movementDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "movementStartTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Start of transport"
+          },
+          "movementEndTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "vehicleID": {
+            "type": "string",
+            "description": "Vehicle license plate",
+            "nullable": true
+          },
+          "isValued": {
+            "type": "boolean",
+            "description": "false on an unvalued transport document: the PDF shows no prices and the AT receives 0.00. The line prices stay stored."
+          },
+          "unitId": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Draft revision. Send it as expectedUpdatedAt when issuing.",
+            "nullable": true
+          },
+          "canceledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "syncWithAt": {
+            "type": "object",
+            "description": "Reporting to the AT. Null on a draft.",
+            "properties": {
+              "status": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "atCode": {
+                "type": "string",
+                "nullable": true
+              },
+              "atMessage": {
+                "type": "string",
+                "nullable": true
+              },
+              "systemError": {
+                "type": "string",
+                "nullable": true
+              },
+              "isRetriable": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "nullable": true,
+            "required": [
+              "status",
+              "action",
+              "atCode",
+              "atMessage",
+              "systemError",
+              "isRetriable",
+              "updatedAt"
+            ]
           },
           "issuer": {
             "type": "object",
@@ -13319,25 +15639,293 @@
                     "type": "string"
                   },
                   "taxPayerNumber": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "123456789"
                   },
                   "address": {
-                    "type": "string"
-                  },
-                  "city": {
                     "type": "string"
                   },
                   "postalCode": {
                     "type": "string"
                   },
-                  "country": {
+                  "city": {
                     "type": "string"
+                  },
+                  "country": {
+                    "type": "string",
+                    "example": "PT"
                   }
-                }
+                },
+                "required": [
+                  "name",
+                  "taxPayerNumber",
+                  "address",
+                  "postalCode",
+                  "city",
+                  "country"
+                ]
               }
-            }
+            },
+            "required": [
+              "ref",
+              "data"
+            ]
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "ref": {
+                "type": "string",
+                "nullable": true
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "taxpayerNumber": {
+                    "type": "string",
+                    "example": "123456789",
+                    "nullable": true
+                  },
+                  "address": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "postalCode": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "city": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "country": {
+                    "type": "string",
+                    "example": "PT",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "name",
+                  "taxpayerNumber",
+                  "address",
+                  "postalCode",
+                  "city",
+                  "country"
+                ]
+              }
+            },
+            "nullable": true,
+            "required": [
+              "ref",
+              "data"
+            ]
+          },
+          "addressFrom": {
+            "type": "object",
+            "properties": {
+              "ref": {
+                "type": "string",
+                "description": "Saved address this one was copied from",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "example": "Armazém Lisboa"
+              },
+              "addressDetail": {
+                "type": "string",
+                "example": "Rua da Prata, 12, 2.º"
+              },
+              "postalCode": {
+                "type": "string",
+                "example": "1100-052"
+              },
+              "city": {
+                "type": "string",
+                "example": "Lisboa"
+              },
+              "country": {
+                "type": "string",
+                "example": "PT"
+              }
+            },
+            "required": [
+              "ref",
+              "name",
+              "addressDetail",
+              "postalCode",
+              "city",
+              "country"
+            ]
+          },
+          "addressTo": {
+            "type": "object",
+            "properties": {
+              "ref": {
+                "type": "string",
+                "description": "Saved address this one was copied from",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "example": "Armazém Lisboa"
+              },
+              "addressDetail": {
+                "type": "string",
+                "example": "Rua da Prata, 12, 2.º"
+              },
+              "postalCode": {
+                "type": "string",
+                "example": "1100-052"
+              },
+              "city": {
+                "type": "string",
+                "example": "Lisboa"
+              },
+              "country": {
+                "type": "string",
+                "example": "PT"
+              }
+            },
+            "nullable": true,
+            "required": [
+              "ref",
+              "name",
+              "addressDetail",
+              "postalCode",
+              "city",
+              "country"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "description": "Catalogue item sent on the line",
+                  "nullable": true
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "quantity": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "amountWithoutTax": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "amountWithTax": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "taxAmount": {
+                      "type": "number",
+                      "nullable": true
+                    }
+                  },
+                  "nullable": true,
+                  "required": [
+                    "quantity",
+                    "amountWithoutTax",
+                    "amountWithTax",
+                    "taxAmount"
+                  ]
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "description": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "PRODUCT",
+                        "SERVICE"
+                      ]
+                    },
+                    "unitPrice": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "unitType": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "vatRate": {
+                      "type": "string",
+                      "enum": [
+                        "NORMAL",
+                        "INTERMEDIATE",
+                        "REDUCED",
+                        "EXEMPT",
+                        null
+                      ],
+                      "nullable": true
+                    },
+                    "vatExemptionReason": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "nullable": true,
+                  "required": [
+                    "name",
+                    "description",
+                    "type",
+                    "unitPrice",
+                    "unitType",
+                    "vatRate",
+                    "vatExemptionReason"
+                  ]
+                }
+              },
+              "required": [
+                "ref",
+                "meta",
+                "data"
+              ]
+            },
+            "nullable": true
           }
-        }
+        },
+        "required": [
+          "id",
+          "documentNumber",
+          "atcud",
+          "atDocCodeID",
+          "atWarning",
+          "movementType",
+          "movementStatus",
+          "issueStatus",
+          "movementDate",
+          "movementStartTime",
+          "movementEndTime",
+          "vehicleID",
+          "isValued",
+          "unitId",
+          "createdAt",
+          "updatedAt",
+          "canceledAt",
+          "syncWithAt",
+          "issuer",
+          "customer",
+          "addressFrom",
+          "addressTo",
+          "items"
+        ]
       },
       "BankConnectionResponseDto": {
         "type": "object",

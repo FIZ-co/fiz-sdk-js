@@ -56,7 +56,7 @@ run('sandbox walk-through', () => {
       console.warn('Sandbox company not ready to issue:', company.readiness.reasons);
       return;
     }
-    const issued = await fiz.invoices.issue(created.id, { expectedUpdatedAt: draft.updatedAt });
+    const issued = await fiz.invoices.issue(created.id, { expectedUpdatedAt: created.updatedAt });
     expect(issued.number).toBeTruthy();
     expect(issued.atcud).toBeTruthy();
   });

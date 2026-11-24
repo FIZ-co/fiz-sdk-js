@@ -1276,8 +1276,9 @@ export type components = {
             /**
              * @description Only on the lines of partial credit/debit notes: what the line changes on the corrected invoice line — the quantity (QUANTITY) or the unit price (PRICE). Absent on other lines and on older notes.
              * @example QUANTITY
+             * @enum {string|null}
              */
-            noteChangeKind?: string | null;
+            noteChangeKind?: "QUANTITY" | "PRICE" | null;
             /**
              * @description With noteChangeKind: the quantity or unit price of the invoice line before this note.
              * @example 5
@@ -1359,7 +1360,7 @@ export type components = {
              */
             autoSend: boolean | null;
             /** @description Recipients of the automatic sending */
-            autoSendEmails: components["schemas"]["InvoiceScheduleAutoSendEmailsResponseDto"] | null;
+            autoSendEmails: components["schemas"]["InvoiceScheduleAutoSendEmailsResponseDto"] | (never | null);
             /**
              * Format: date-time
              * @description Next planned issue. Null when there are no more occurrences (COMPLETED) or the schedule is stopped.
@@ -1404,7 +1405,7 @@ export type components = {
              */
             cae: string;
             /** @description Series the documents are issued in */
-            series: components["schemas"]["SeriesDto"] | null;
+            series: components["schemas"]["SeriesDto"] | (never | null);
             /** @description Customer */
             customer: components["schemas"]["CustomerDto"];
             /** @description Totals of each document to issue */
@@ -1581,6 +1582,18 @@ export type components = {
              */
             payment?: components["schemas"]["InvoicePaymentInputDto"];
         };
+        LegacyPaymentDto: {
+            /**
+             * @description Payment method
+             * @example bankTransfer
+             */
+            method: string;
+            /**
+             * @description Payment date
+             * @example 2025-11-04T07:00:00.000Z
+             */
+            date: string;
+        };
         CreateInvoiceResponseDto: {
             /**
              * @description Unique invoice identifier
@@ -1613,6 +1626,12 @@ export type components = {
              */
             status: string;
             /**
+             * Format: date-time
+             * @description Draft revision (updatedAt). Send it as expectedUpdatedAt when issuing: a draft changed in the meantime is refused.
+             * @example 2025-10-28T11:58:01.936Z
+             */
+            updatedAt: string;
+            /**
              * @description Invoice notes
              * @example null
              */
@@ -1623,7 +1642,7 @@ export type components = {
              * @description Payment
              * @example null
              */
-            payment: Record<string, never> | null;
+            payment: components["schemas"]["LegacyPaymentDto"] | (never | null);
             /** @description Customer */
             customer: components["schemas"]["CustomerDto"];
             /**
@@ -1708,12 +1727,12 @@ export type components = {
              */
             id: string;
             /**
-             * @description Número da nota de crédito. Null quando é criada como rascunho (issue: false) — é atribuído na emissão.
+             * @description Credit note number. Null when created as a draft (issue: false); assigned on issue.
              * @example NC FIZ2026/12
              */
             number: string | null;
             /**
-             * @description Código único do documento (ATCUD). Null quando é criada como rascunho (issue: false) — é atribuído na emissão.
+             * @description Unique document code (ATCUD). Null when created as a draft (issue: false); assigned on issue.
              * @example J6BR42T7-12
              */
             atcud: string | null;
@@ -1900,7 +1919,7 @@ export type components = {
              * @description Payment
              * @example null
              */
-            payment: Record<string, never> | null;
+            payment: components["schemas"]["LegacyPaymentDto"] | (never | null);
             /** @description Customer */
             customer: components["schemas"]["CustomerDto"];
             /**
@@ -1941,18 +1960,6 @@ export type components = {
              * @example 123.45
              */
             amount?: number;
-        };
-        LegacyPaymentDto: {
-            /**
-             * @description Payment method
-             * @example bankTransfer
-             */
-            method: string;
-            /**
-             * @description Payment date
-             * @example 2025-11-04T07:00:00.000Z
-             */
-            date: string;
         };
         PaymentDto: {
             /**
@@ -2062,11 +2069,11 @@ export type components = {
             /** @description Invoice series */
             series: components["schemas"]["SeriesDto"];
             /** @description Legacy field, populated only once the invoice is fully paid. On a partial payment it is null — use `payments`. */
-            payment: components["schemas"]["LegacyPaymentDto"] | null;
+            payment: components["schemas"]["LegacyPaymentDto"] | (never | null);
             /** @description Every payment registered against the invoice, including each amount. */
             payments: components["schemas"]["PaymentDto"][];
             /** @description Receipt (RG) issued by this payment, carrying the id needed to download its PDF from GET /invoices/{id}/pdf. On a partial payment this is the receipt for this payment, not an earlier one. Null for AT-imported invoices, for which no receipt is issued. */
-            receipt: components["schemas"]["PayInvoiceReceiptDto"] | null;
+            receipt: components["schemas"]["PayInvoiceReceiptDto"] | (never | null);
             /** @description Customer */
             customer: components["schemas"]["CustomerDto"];
             /**
@@ -2124,7 +2131,7 @@ export type components = {
              */
             canceledAt: string | null;
             /** @description AT synchronization status */
-            syncWithAt: components["schemas"]["SyncWithAtDto"] | null;
+            syncWithAt: components["schemas"]["SyncWithAtDto"] | (never | null);
         };
         DownloadInvoicePdfResponseDto: {
             /**
@@ -2478,7 +2485,7 @@ export type components = {
              */
             cae: string | null;
             /** @description Series */
-            series: components["schemas"]["SeriesDto"] | null;
+            series: components["schemas"]["SeriesDto"] | (never | null);
             /** @description Customer */
             customer: components["schemas"]["CustomerDto"];
             /** @description Totals */
@@ -3425,17 +3432,23 @@ export type components = {
         };
         CreateTemplateDto: {
             /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            id?: Record<string, never>;
+            id?: string;
+            /**
+             * @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is.
+             * @enum {string}
+             */
+            kind?: "INVOICE" | "TRANSPORT_DOCUMENT";
+            /**
+             * @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is.
+             * @enum {string}
+             */
+            format?: "A4" | "RECEIPT" | "RECEIPT_58";
             /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            kind?: Record<string, never>;
-            /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            format?: Record<string, never>;
-            /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            fiscal?: Record<string, never>;
+            fiscal?: boolean;
             /** @description On import of a template without starterId: if it includes CREDIT_NOTE or DEBIT_NOTE, asks that the template print credit and debit notes. Granted only if the template prints the reference to the rectified document. Ignored with starterId and on replace. */
-            documentTypes?: Record<string, never>;
+            documentTypes?: string[];
             /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            updatedAt?: Record<string, never>;
+            updatedAt?: string;
             /**
              * @description Template name, unique among the templates of the same owner
              * @example Modelo Ginásio
@@ -3465,17 +3478,23 @@ export type components = {
         };
         UpdateTemplateDto: {
             /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            id?: Record<string, never>;
+            id?: string;
+            /**
+             * @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is.
+             * @enum {string}
+             */
+            kind?: "INVOICE" | "TRANSPORT_DOCUMENT";
+            /**
+             * @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is.
+             * @enum {string}
+             */
+            format?: "A4" | "RECEIPT" | "RECEIPT_58";
             /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            kind?: Record<string, never>;
-            /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            format?: Record<string, never>;
-            /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            fiscal?: Record<string, never>;
+            fiscal?: boolean;
             /** @description On import of a template without starterId: if it includes CREDIT_NOTE or DEBIT_NOTE, asks that the template print credit and debit notes. Granted only if the template prints the reference to the rectified document. Ignored with starterId and on replace. */
-            documentTypes?: Record<string, never>;
+            documentTypes?: string[];
             /** @description Ignored on import: set by the server. Accepted so the response of GET /templates/{id} can be sent as is. */
-            updatedAt?: Record<string, never>;
+            updatedAt?: string;
             /**
              * @description Template name, unique among the templates of the same owner
              * @example Modelo Ginásio
@@ -3498,7 +3517,7 @@ export type components = {
              */
             language?: "en" | "pt";
             /** @description Ignored on replace: a template's origin does not change. Accepted so an export can be sent as is. */
-            starterId?: Record<string, never>;
+            starterId?: string;
         };
         DeleteTemplateResponseDto: {
             /** @description Identifier of the deleted template */
@@ -3788,7 +3807,7 @@ export type components = {
             /** @description The e-Fatura portal's refusal message, as received */
             error: string | null;
             /** @description FIZ and the e-Fatura portal hold different answers and it is unknown which is newer; a person picks one in the app */
-            conflict: components["schemas"]["ExpenseEfaturaConflictDto"] | null;
+            conflict: components["schemas"]["ExpenseEfaturaConflictDto"] | (never | null);
             /** @description Since when the portal contradicts an expense already deducted in a filed quarter (the portal answer was not applied) */
             portalDisagreesAt: string | null;
         };
@@ -3854,7 +3873,7 @@ export type components = {
             /** @description Expense categorisation */
             categorization: components["schemas"]["ExpenseCategorizationDto"];
             /** @description Deductible VAT computed by the VAT return engine. Null when there is nothing to deduct (not categorised, personal expense). */
-            vatDeduction: components["schemas"]["ExpenseVatDeductionDto"] | null;
+            vatDeduction: components["schemas"]["ExpenseVatDeductionDto"] | (never | null);
             /** @description Categorisation reported to the e-Fatura portal */
             efaturaSync: components["schemas"]["ExpenseEfaturaSyncDto"];
             /** @description Record created at */
@@ -4048,7 +4067,7 @@ export type components = {
              */
             requestedScopes: string[];
             /** @description The company/application connection behind an OAuth token. A revoked authorization answers 401 instead, so a returned installation is always connected. Absent for API keys. */
-            installation?: components["schemas"]["InstallationDto"] | null;
+            installation?: components["schemas"]["InstallationDto"] | (never | null);
             readiness: components["schemas"]["ReadinessDto"];
         };
         ExportSaftPtResponseDto: {
@@ -4095,18 +4114,18 @@ export type components = {
         };
         InvoiceListItemResponseDto: {
             /** @example 68483e978073231c3947077c */
-            id?: string;
+            id: string;
             /** @example FT 2025/001 */
-            number?: string;
+            number: string | null;
             /** @example INVOICE */
-            documentType?: string;
+            documentType: string | null;
             /** @example ISSUED */
-            status?: string;
+            status: string;
             /**
              * Format: date-time
              * @example 2025-10-30T10:41:53.097Z
              */
-            date?: string;
+            date: string | null;
             /**
              * Format: date-time
              * @description Date of supply, when recorded (art. 36.º n.º 5 al. f) CIVA). Comes back null when it was not recorded — the issue date applies in that case.
@@ -4117,71 +4136,71 @@ export type components = {
              * Format: date-time
              * @example 2025-11-30T10:41:53.097Z
              */
-            dueDate?: string;
+            dueDate: string | null;
             /** @example EUR */
-            currency?: string;
+            currency: string | null;
             /**
              * @description The invoice that spawned this document. Populated on receipts, credit notes and debit notes; null on an invoice.
              * @example 68483e978073231c3947077c
              */
-            parentInvoiceId?: string | null;
+            parentInvoiceId: string | null;
             /**
              * @description Number of the originating invoice
              * @example FT 2025/001
              */
-            parentInvoiceNumber?: string | null;
+            parentInvoiceNumber: string | null;
             /**
              * Format: date-time
              * @description Date of the originating invoice
              * @example 2025-10-30T10:41:53.097Z
              */
-            parentInvoiceDate?: string | null;
+            parentInvoiceDate: string | null;
             /**
              * @description Document type of the originating invoice
              * @example INVOICE
              */
-            parentInvoiceType?: string | null;
+            parentInvoiceType: string | null;
             /**
              * @description Recurring invoice that issued this document. Null on a manually created document.
              * @example 6900afc7e9a04d2adc897c68
              */
-            scheduleTemplateId?: string | null;
-            summary?: {
-                amountWithoutTax?: number;
-                amountWithTax?: number;
-                taxAmount?: number;
-                total?: number;
-            };
-            customer?: {
-                ref?: string;
-                data?: {
-                    name?: string;
-                    taxpayerNumber?: string;
-                    email?: string;
-                };
-            };
+            scheduleTemplateId: string | null;
+            summary: {
+                amountWithoutTax: number | null;
+                amountWithTax: number | null;
+                taxAmount: number | null;
+                total: number | null;
+            } | null;
+            customer: {
+                ref: string | null;
+                data: {
+                    name: string | null;
+                    taxpayerNumber: string | null;
+                    email: string | null;
+                } | null;
+            } | null;
         };
         InvoiceResponseDto: {
             /** @example 68483e978073231c3947077c */
-            id?: string;
+            id: string;
             /** @example FT 2025/001 */
-            number?: string;
-            atcud?: string;
-            shortHash?: string;
+            number: string | null;
+            atcud: string | null;
+            shortHash: string | null;
             /** @example INVOICE */
-            documentType?: string;
+            documentType: string | null;
             /** @example ISSUED */
-            status?: string;
+            status: string;
             /**
              * Format: date-time
              * @description Draft revision to pass as expectedUpdatedAt when issuing.
              */
-            updatedAt?: string;
+            updatedAt: string | null;
             /**
              * Format: date-time
              * @example 2025-10-30T10:41:53.097Z
              */
-            date?: string;
+            date: string | null;
             /**
              * Format: date-time
              * @description Date of supply, when recorded (art. 36.º n.º 5 al. f) CIVA). Comes back null when it was not recorded — the issue date applies in that case.
@@ -4192,171 +4211,320 @@ export type components = {
              * Format: date-time
              * @example 2025-11-30T10:41:53.097Z
              */
-            dueDate?: string;
+            dueDate: string | null;
             /** @example EUR */
-            currency?: string;
-            description?: string;
-            notes?: string;
-            cae?: string;
+            currency: string | null;
+            description: string | null;
+            notes: string | null;
+            cae: string | null;
             /**
              * Format: date-time
              * @example 2025-10-30T10:41:53.097Z
              */
-            createdAt?: string;
+            createdAt: string | null;
             /**
              * Format: date-time
              * @example 2025-10-30T10:41:53.097Z
              */
-            issuedAt?: string;
+            issuedAt: string | null;
             /**
              * @description The invoice that spawned this document. Populated on receipts, credit notes and debit notes; null on an invoice.
              * @example 68483e978073231c3947077c
              */
-            parentInvoiceId?: string | null;
+            parentInvoiceId: string | null;
             /**
              * @description Number of the originating invoice
              * @example FT 2025/001
              */
-            parentInvoiceNumber?: string | null;
+            parentInvoiceNumber: string | null;
             /**
              * Format: date-time
              * @description Date of the originating invoice
              * @example 2025-10-30T10:41:53.097Z
              */
-            parentInvoiceDate?: string | null;
+            parentInvoiceDate: string | null;
             /**
              * @description Document type of the originating invoice
              * @example INVOICE
              */
-            parentInvoiceType?: string | null;
+            parentInvoiceType: string | null;
             /** @description Advance invoice (an FT or FR recording a payment received in advance), to be deducted later in a final invoice. */
-            isAdvance?: boolean | null;
+            isAdvance: boolean | null;
             /** @description Advance invoices only: computed balance (not stored). remaining = total − deducted in live final invoices − refunded by ADVANCE_REFUND credit notes. */
-            advanceBalance?: {
+            advanceBalance: {
                 /** @description Taxable base of the advance */
-                total?: number;
-                deducted?: number;
-                refunded?: number;
-                remaining?: number;
-                byRate?: {
-                    vatRate?: string | null;
-                    taxRate?: number;
-                    exemptionCode?: string | null;
-                    base?: number;
-                    remaining?: number;
+                total: number;
+                deducted: number;
+                refunded: number;
+                remaining: number;
+                byRate: {
+                    vatRate: string | null;
+                    taxRate: number;
+                    exemptionCode: string | null;
+                    base: number;
+                    remaining: number;
                 }[];
             } | null;
-            syncWithAt?: {
-                status?: string;
-                atCode?: string;
-                atMessage?: string;
-            };
-            series?: {
-                ref?: string;
-                name?: string;
-            };
-            customer?: {
-                ref?: string;
-                data?: {
-                    name?: string;
-                    taxpayerNumber?: string;
-                    email?: string;
-                    address?: string;
-                    postalCode?: string;
-                    city?: string;
-                    country?: string;
-                    phone?: string;
-                    mobile?: string;
-                };
-            };
-            summary?: {
-                amountWithoutTax?: number;
-                amountWithTax?: number;
-                amountWithoutTaxWithoutDiscount?: number;
-                taxAmount?: number;
-                /** @enum {string} */
-                globalDiscountType?: "PERCENT" | "AMOUNT";
-                globalDiscountPercent?: number;
-                globalDiscountAmount?: number;
-                total?: number;
-                totalToPay?: number;
-                withholdingTaxAmount?: number;
-                creditNotesTotal?: number;
-            };
-            items?: {
-                id?: string;
-                ref?: string;
-                meta?: {
-                    quantity?: number;
-                    amountWithoutTax?: number;
-                    amountWithTax?: number;
-                    taxAmount?: number;
-                    discountAmount?: number;
-                    unitItemDiscountPercent?: number;
-                    unitItemDiscountAmount?: number;
-                    unitDiscountPercent?: number;
-                    unitDiscountAmount?: number;
-                    unitAmountWithoutTax?: number;
-                    unitAmountWithTax?: number;
-                    withholdingTaxAmount?: number;
-                    withholdingTaxEnabled?: boolean;
-                };
-                data?: {
-                    name?: string;
-                    description?: string;
-                    type?: string;
-                    unitPrice?: number;
-                    vatRate?: string;
-                    /** @enum {string} */
-                    unitDiscountType?: "PERCENT" | "AMOUNT";
-                    unitDiscountPercent?: number;
-                    unitDiscountAmount?: number;
-                };
+            syncWithAt: {
+                status: string | null;
+                atCode: string | null;
+                atMessage: string | null;
+            } | null;
+            series: {
+                ref: string | null;
+                name: string | null;
+            } | null;
+            customer: {
+                ref: string | null;
+                data: {
+                    name: string | null;
+                    taxpayerNumber: string | null;
+                    email: string | null;
+                    address: string | null;
+                    postalCode: string | null;
+                    city: string | null;
+                    country: string | null;
+                    phone: string | null;
+                    mobile: string | null;
+                } | null;
+            } | null;
+            summary: {
+                amountWithoutTax: number | null;
+                amountWithTax: number | null;
+                amountWithoutTaxWithoutDiscount: number | null;
+                taxAmount: number | null;
+                /** @enum {string|null} */
+                globalDiscountType: "PERCENT" | "AMOUNT" | null;
+                globalDiscountPercent: number | null;
+                globalDiscountAmount: number | null;
+                total: number | null;
+                totalToPay: number | null;
+                withholdingTaxAmount: number | null;
+                creditNotesTotal: number | null;
+            } | null;
+            items: {
+                id: string;
+                ref: string | null;
+                /**
+                 * @description Only on the lines of partial credit/debit notes: what the line changes on the corrected invoice line — the quantity (QUANTITY) or the unit price (PRICE). Absent on other lines and on older notes.
+                 * @example QUANTITY
+                 * @enum {string|null}
+                 */
+                noteChangeKind: "QUANTITY" | "PRICE" | null;
+                /** @description With noteChangeKind: the quantity or unit price of the invoice line before this note. */
+                noteChangeFrom: number | null;
+                /** @description With noteChangeKind: the quantity or unit price of the invoice line after this note. */
+                noteChangeTo: number | null;
+                meta: {
+                    quantity: number | null;
+                    amountWithoutTax: number | null;
+                    amountWithTax: number | null;
+                    taxAmount: number | null;
+                    discountAmount: number | null;
+                    unitItemDiscountPercent: number | null;
+                    unitItemDiscountAmount: number | null;
+                    unitDiscountPercent: number | null;
+                    unitDiscountAmount: number | null;
+                    unitAmountWithoutTax: number | null;
+                    unitAmountWithTax: number | null;
+                    withholdingTaxAmount: number | null;
+                    withholdingTaxEnabled: boolean | null;
+                } | null;
+                data: {
+                    name: string | null;
+                    description: string | null;
+                    type: string;
+                    unitPrice: number | null;
+                    vatRate: string | null;
+                    /** @enum {string|null} */
+                    unitDiscountType: "PERCENT" | "AMOUNT" | null;
+                    unitDiscountPercent: number | null;
+                    unitDiscountAmount: number | null;
+                } | null;
                 /**
                  * @description ADVANCE_DEDUCTION: an advance deduction line. Its amounts are negative, it belongs to the item line parentItemId of the same document and has no catalogue item (ref). Do not copy it into a new draft or list it in a partial credit note. Absent on ordinary lines.
                  * @enum {string|null}
                  */
-                kind?: "ADVANCE_DEDUCTION" | null;
+                kind: "ADVANCE_DEDUCTION" | null;
                 /** @description With kind ADVANCE_DEDUCTION: the `id` of the item line the deduction belongs to. */
-                parentItemId?: string | null;
+                parentItemId: string | null;
                 /** @description With kind ADVANCE_DEDUCTION: the advance invoice deducted. */
-                advanceRef?: {
-                    invoiceId?: string;
+                advanceRef: {
+                    invoiceId: string;
                     /** @example FR A2026/1 */
-                    number?: string;
+                    number: string;
                     /** Format: date-time */
-                    date?: string;
+                    date: string;
                     /**
                      * Format: date-time
-                     * @description Payment date of the advance: the FR date, or the date of the receipt that paid the FT (without one, the FT date).
+                     * @description Payment date of the advance: the FR's own date, or the date of the FT's latest receipt or recorded payment. null on an FT with no recorded payment.
                      */
-                    paymentDate?: string;
+                    paymentDate: string | null;
                 } | null;
-            }[];
-            payment?: {
-                method?: string;
+            }[] | null;
+            payment: {
+                method: string | null;
                 /**
                  * Format: date-time
                  * @example 2025-10-30T10:41:53.097Z
                  */
-                date?: string;
-            };
-            qrCode?: {
-                url?: string;
-                data?: string;
-                imageData?: string;
-            };
-            issuer?: {
-                ref?: string;
-                data?: {
-                    name?: string;
-                    taxPayerNumber?: string;
-                    address?: string;
-                    city?: string;
-                    postalCode?: string;
-                    country?: string;
+                date: string | null;
+            } | null;
+            qrCode: {
+                url: string | null;
+                data: string;
+                imageData: string;
+            } | null;
+            issuer: {
+                ref: string | null;
+                data: {
+                    name: string | null;
+                    taxPayerNumber: string | null;
+                    address: string | null;
+                    city: string | null;
+                    postalCode: string | null;
+                    country: string | null;
+                } | null;
+            } | null;
+        };
+        TransportDocumentResponseDto: {
+            /** @example 6900afc7e9a04d2adc897c68 */
+            id: string;
+            /**
+             * @description Document number. On a draft, a provisional number.
+             * @example GT FIZ2026/12
+             */
+            documentNumber: string;
+            /** @description Unique document code (ATCUD). Null until issued. */
+            atcud: string | null;
+            /** @description Identification code the AT assigns when the document is reported. Null until issued. */
+            atDocCodeID: string | null;
+            /** @description Warning the AT returned when the document was reported, if any. */
+            atWarning: string | null;
+            /**
+             * @description Transport document type (GR, GT, GA, GC, GD)
+             * @enum {string}
+             */
+            movementType: "GUIA_DE_REMESSA" | "GUIA_DE_TRANSPORTE" | "GUIA_DE_ATIVOS_PROPRIOS" | "GUIA_DE_CONSIGNACAO" | "GUIA_DE_DEVOLUCAO";
+            /**
+             * @description SAF-T status: N normal, T invoiced, A cancelled
+             * @enum {string}
+             */
+            movementStatus: "N" | "T" | "A";
+            /**
+             * @description Draft, issued (reported to the AT) or cancelled
+             * @enum {string}
+             */
+            issueStatus: "DRAFT" | "ISSUED" | "CANCELED";
+            /** Format: date-time */
+            movementDate: string;
+            /**
+             * Format: date-time
+             * @description Start of transport
+             */
+            movementStartTime: string;
+            /** Format: date-time */
+            movementEndTime: string | null;
+            /** @description Vehicle license plate */
+            vehicleID: string | null;
+            /** @description false on an unvalued transport document: the PDF shows no prices and the AT receives 0.00. The line prices stay stored. */
+            isValued: boolean;
+            unitId: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Draft revision. Send it as expectedUpdatedAt when issuing.
+             */
+            updatedAt: string | null;
+            /** Format: date-time */
+            canceledAt: string | null;
+            /** @description Reporting to the AT. Null on a draft. */
+            syncWithAt: {
+                status: string;
+                action: string;
+                atCode: string | null;
+                atMessage: string | null;
+                systemError: string | null;
+                isRetriable: boolean | null;
+                /** Format: date-time */
+                updatedAt: string;
+            } | null;
+            issuer: {
+                ref: string;
+                data: {
+                    name: string;
+                    /** @example 123456789 */
+                    taxPayerNumber: string;
+                    address: string;
+                    postalCode: string;
+                    city: string;
+                    /** @example PT */
+                    country: string;
                 };
             };
+            customer: {
+                ref: string | null;
+                data: {
+                    name: string;
+                    /** @example 123456789 */
+                    taxpayerNumber: string | null;
+                    address: string | null;
+                    postalCode: string | null;
+                    city: string | null;
+                    /** @example PT */
+                    country: string | null;
+                };
+            } | null;
+            addressFrom: {
+                /** @description Saved address this one was copied from */
+                ref: string | null;
+                /** @example Armazém Lisboa */
+                name: string;
+                /** @example Rua da Prata, 12, 2.º */
+                addressDetail: string;
+                /** @example 1100-052 */
+                postalCode: string;
+                /** @example Lisboa */
+                city: string;
+                /** @example PT */
+                country: string;
+            };
+            addressTo: {
+                /** @description Saved address this one was copied from */
+                ref: string | null;
+                /** @example Armazém Lisboa */
+                name: string;
+                /** @example Rua da Prata, 12, 2.º */
+                addressDetail: string;
+                /** @example 1100-052 */
+                postalCode: string;
+                /** @example Lisboa */
+                city: string;
+                /** @example PT */
+                country: string;
+            } | null;
+            items: {
+                /** @description Catalogue item sent on the line */
+                ref: string | null;
+                meta: {
+                    quantity: number | null;
+                    amountWithoutTax: number | null;
+                    amountWithTax: number | null;
+                    taxAmount: number | null;
+                } | null;
+                data: {
+                    name: string | null;
+                    description: string | null;
+                    /** @enum {string} */
+                    type: "PRODUCT" | "SERVICE";
+                    unitPrice: number | null;
+                    unitType: string | null;
+                    /** @enum {string|null} */
+                    vatRate: "NORMAL" | "INTERMEDIATE" | "REDUCED" | "EXEMPT" | null;
+                    vatExemptionReason: string | null;
+                } | null;
+            }[] | null;
         };
         BankConnectionResponseDto: {
             /** @example a1b2c3d4-0000-0000-0000-000000000000 */
@@ -4451,6 +4619,8 @@ export interface operations {
             /** @description List of recurring invoices returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -4501,6 +4671,8 @@ export interface operations {
             /** @description Recurring invoice created successfully */
             201: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -4579,6 +4751,8 @@ export interface operations {
             /** @description Recurring invoice found */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -4627,6 +4801,8 @@ export interface operations {
             /** @description Recurring invoice deleted successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -4702,6 +4878,8 @@ export interface operations {
             /** @description Recurring invoice updated successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -4814,6 +4992,8 @@ export interface operations {
             /** @description List of invoices returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -4834,6 +5014,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -4864,6 +5057,8 @@ export interface operations {
             /** @description Draft invoice created successfully */
             201: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -4914,6 +5109,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     InvoicesController_createCreditNote: {
@@ -4936,6 +5144,8 @@ export interface operations {
             /** @description Credit note created successfully */
             201: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -4997,6 +5207,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     InvoicesController_findOne: {
@@ -5014,6 +5237,8 @@ export interface operations {
             /** @description Invoice found */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -5053,6 +5278,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     InvoicesController_delete: {
@@ -5073,6 +5311,8 @@ export interface operations {
             /** @description Invoice deleted successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -5134,6 +5374,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     InvoicesController_update: {
@@ -5159,6 +5412,8 @@ export interface operations {
             /** @description Draft invoice updated successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -5220,6 +5475,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     InvoicesController_issue: {
@@ -5243,6 +5511,8 @@ export interface operations {
             /** @description Invoice issued successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -5293,6 +5563,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     InvoicesController_pay: {
@@ -5317,6 +5600,8 @@ export interface operations {
             /** @description Payment registered successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -5378,6 +5663,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     InvoicesController_cancel: {
@@ -5401,6 +5699,8 @@ export interface operations {
             /** @description Invoice cancelled successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -5451,6 +5751,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     InvoicesController_getPdf: {
@@ -5474,6 +5787,8 @@ export interface operations {
             /** @description PDF generated successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -5513,6 +5828,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TransportDocumentsController_findAll: {
@@ -5540,9 +5868,13 @@ export interface operations {
             /** @description List of transport documents returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TransportDocumentResponseDto"][];
+                };
             };
             /** @description Invalid parameters */
             400: {
@@ -5558,6 +5890,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -5588,9 +5933,13 @@ export interface operations {
             /** @description Draft transport document created successfully */
             201: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TransportDocumentResponseDto"];
+                };
             };
             /** @description Invalid data */
             400: {
@@ -5636,6 +5985,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TransportDocumentsController_findOne: {
@@ -5653,9 +6015,13 @@ export interface operations {
             /** @description Transport document found */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TransportDocumentResponseDto"];
+                };
             };
             /** @description Unauthorized - API key missing or invalid */
             401: {
@@ -5671,6 +6037,19 @@ export interface operations {
             /** @description Transport document not found */
             404: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -5699,9 +6078,13 @@ export interface operations {
             /** @description Transport document deleted successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TransportDocumentResponseDto"];
+                };
             };
             /** @description Transport document already issued — cannot be deleted */
             400: {
@@ -5758,6 +6141,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TransportDocumentsController_update: {
@@ -5783,9 +6179,13 @@ export interface operations {
             /** @description Transport document updated successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TransportDocumentResponseDto"];
+                };
             };
             /** @description Invalid data or transport document already issued */
             400: {
@@ -5842,6 +6242,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TransportDocumentsController_issue: {
@@ -5866,9 +6279,13 @@ export interface operations {
             /** @description Transport document issued successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TransportDocumentResponseDto"];
+                };
             };
             /** @description Transport document invalid, already issued, loading time already passed or postal code invalid */
             400: {
@@ -5925,6 +6342,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TransportDocumentsController_cancel: {
@@ -5945,9 +6375,13 @@ export interface operations {
             /** @description Transport document cancelled successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["TransportDocumentResponseDto"];
+                };
             };
             /** @description Transport document not issued or already cancelled */
             400: {
@@ -6004,6 +6438,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TransportDocumentsController_getPdf: {
@@ -6024,6 +6471,8 @@ export interface operations {
             /** @description PDF generated successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6044,6 +6493,19 @@ export interface operations {
             /** @description Transport document not found */
             404: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -6081,6 +6543,8 @@ export interface operations {
             /** @description List of pro formas returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6131,6 +6595,8 @@ export interface operations {
             /** @description Pro forma created successfully */
             201: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6198,6 +6664,8 @@ export interface operations {
             /** @description Pro forma found */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6246,6 +6714,8 @@ export interface operations {
             /** @description Pro forma deleted successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6327,6 +6797,8 @@ export interface operations {
             /** @description Pro forma canceled successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6410,6 +6882,8 @@ export interface operations {
             /** @description PDF generated successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6497,6 +6971,8 @@ export interface operations {
             /** @description List of customers returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6517,6 +6993,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -6547,6 +7036,8 @@ export interface operations {
             /** @description Customer created successfully */
             201: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6597,6 +7088,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     CustomersController_findOne: {
@@ -6614,6 +7118,8 @@ export interface operations {
             /** @description Customer found */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6653,6 +7159,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     CustomersController_delete: {
@@ -6673,6 +7192,8 @@ export interface operations {
             /** @description Customer archived successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6726,6 +7247,19 @@ export interface operations {
             /** @description The idempotency key was already used with a different request body */
             422: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -6759,6 +7293,8 @@ export interface operations {
             /** @description Customer updated successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6809,6 +7345,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     CustomersController_restore: {
@@ -6829,6 +7378,8 @@ export interface operations {
             /** @description Customer restored successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6882,6 +7433,19 @@ export interface operations {
             /** @description The idempotency key was already used with a different request body */
             422: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -6941,6 +7505,8 @@ export interface operations {
             /** @description List of items returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -6961,6 +7527,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -6991,6 +7570,8 @@ export interface operations {
             /** @description Item created successfully */
             201: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7041,6 +7622,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     ItemsController_findOne: {
@@ -7058,6 +7652,8 @@ export interface operations {
             /** @description Item found */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7097,6 +7693,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     ItemsController_delete: {
@@ -7117,6 +7726,8 @@ export interface operations {
             /** @description Item archived successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7170,6 +7781,19 @@ export interface operations {
             /** @description The idempotency key was already used with a different request body */
             422: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -7203,6 +7827,8 @@ export interface operations {
             /** @description Item updated successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7253,6 +7879,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TemplatesController_getAll: {
@@ -7272,6 +7911,8 @@ export interface operations {
             /** @description List of templates returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7281,6 +7922,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -7310,6 +7964,8 @@ export interface operations {
             /** @description Template created */
             201: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7360,6 +8016,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TemplatesController_fields: {
@@ -7374,6 +8043,8 @@ export interface operations {
             /** @description Fields per data set */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7383,6 +8054,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -7405,6 +8089,8 @@ export interface operations {
             /** @description Starters */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7414,6 +8100,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -7439,6 +8138,8 @@ export interface operations {
             /** @description Starter */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7467,6 +8168,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TemplatesController_validate: {
@@ -7485,6 +8199,8 @@ export interface operations {
             /** @description Validation result */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7494,6 +8210,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -7520,6 +8249,8 @@ export interface operations {
             /** @description Preview PDF */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7548,6 +8279,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TemplatesController_findOne: {
@@ -7565,6 +8309,8 @@ export interface operations {
             /** @description Template */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7604,6 +8350,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TemplatesController_update: {
@@ -7628,6 +8387,8 @@ export interface operations {
             /** @description Template updated */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7700,6 +8461,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     TemplatesController_delete: {
@@ -7720,6 +8494,8 @@ export interface operations {
             /** @description Template deleted */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7781,6 +8557,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     SeriesController_getAll: {
@@ -7795,6 +8584,8 @@ export interface operations {
             /** @description List of series returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7804,6 +8595,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -7826,6 +8630,8 @@ export interface operations {
             /** @description List of connections returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7887,6 +8693,8 @@ export interface operations {
             /** @description List of transactions returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7949,6 +8757,8 @@ export interface operations {
             /** @description Expense summary returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -7969,6 +8779,19 @@ export interface operations {
             /** @description Unauthorized - API key missing or invalid */
             401: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
@@ -8012,6 +8835,8 @@ export interface operations {
             /** @description Expense list returned successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -8040,6 +8865,19 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
         };
     };
     VatController_calculate: {
@@ -8059,6 +8897,8 @@ export interface operations {
             /** @description VAT calculation performed successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -8117,6 +8957,8 @@ export interface operations {
             /** @description Verification performed successfully */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -8159,10 +9001,25 @@ export interface operations {
             /** @description Connected company and preliminary issuance checks */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["CompanyResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
                 };
             };
         };
@@ -8186,6 +9043,8 @@ export interface operations {
             /** @description Temporary download link for the SAF-T PT file */
             200: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -8217,6 +9076,19 @@ export interface operations {
             /** @description No permission to export SAF-T PT for the entire company */
             403: {
                 headers: {
+                    /** @description Request identifier. Quote it when contacting support about this request. */
+                    "X-Request-Id"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description The OAuth connection’s request limit is reached. Nothing was executed: repeat the same request after Retry-After seconds. */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before repeating the request */
+                    "Retry-After"?: number;
                     /** @description Request identifier. Quote it when contacting support about this request. */
                     "X-Request-Id"?: string;
                     [name: string]: unknown;
