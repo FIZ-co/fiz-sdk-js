@@ -47,6 +47,32 @@ export interface FizOptions {
    * Turn it on only for a page that only its key's owner can open.
    */
   dangerouslyAllowBrowser?: boolean;
+  /**
+   * Called with every response the API sends, retries included: for logging
+   * the request id of each call (support, audit) or measuring latency. An
+   * error thrown here is ignored; it never fails the call.
+   */
+  onResponse?: (response: FizResponseInfo) => void;
+}
+
+/** What `onResponse` receives for each response. */
+export interface FizResponseInfo {
+  /** The OpenAPI operation, e.g. `InvoicesController_issue`. */
+  operationId: string;
+  method: string;
+  /** The route as documented, e.g. `/invoices/{id}/issue`. */
+  path: string;
+  status: number;
+  /** `X-Request-Id`: quote it to FIZ support. */
+  requestId: string | undefined;
+  /** The key a write was sent with. */
+  idempotencyKey: string | undefined;
+  /** True when the API replayed the stored result of an earlier attempt. */
+  replayed: boolean;
+  /** 1 for the first attempt, 2 for the first retry, … */
+  attempt: number;
+  /** From sending the request to receiving the response headers. */
+  durationMs: number;
 }
 
 /** Arguments of `call()`: only the parts the operation takes. */
@@ -71,6 +97,7 @@ export class FizClient {
   private readonly authHeaders: Record<string, string>;
   private readonly fetchImpl: typeof fetch;
   private readonly userAgent: string;
+  private readonly onResponse: FizOptions['onResponse'];
 
   constructor(options: FizOptions = {}) {
     if (isBrowser() && !options.dangerouslyAllowBrowser) {
@@ -98,6 +125,7 @@ export class FizClient {
     if (!fetchImpl) throw new FizError('No fetch available: pass options.fetch.');
     this.fetchImpl = fetchImpl.bind(globalThis);
     this.userAgent = userAgent(options.appInfo);
+    this.onResponse = options.onResponse;
   }
 
   /**
@@ -157,7 +185,19 @@ export class FizClient {
       let payload: unknown;
       let bodyLost: unknown;
       try {
+        const sentAt = Date.now();
         response = await this.attempt(url, operation.method, headers, body, timeout, options.signal);
+        this.report({
+          operationId,
+          method: operation.method,
+          path: operation.path,
+          status: response.status,
+          requestId: response.headers.get('x-request-id') ?? undefined,
+          idempotencyKey,
+          replayed: response.headers.get('idempotent-replayed') === 'true',
+          attempt: attempt + 1,
+          durationMs: Date.now() - sentAt,
+        });
       } catch (error) {
         if (options.signal?.aborted) throw options.signal.reason ?? error;
         if (!repeatable || !canRetry) {
@@ -247,6 +287,15 @@ export class FizClient {
       return response.arrayBuffer();
     }
     throw new FizError(`Downloading ${new URL(fileUrl).pathname}: more than ${MAX_REDIRECTS} redirects`);
+  }
+
+  private report(info: FizResponseInfo): void {
+    if (!this.onResponse) return;
+    try {
+      this.onResponse(info);
+    } catch {
+      // A logging hook must never fail or retry the call it observes.
+    }
   }
 
   private attempt(

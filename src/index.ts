@@ -65,7 +65,7 @@ export class Fiz {
 }
 
 export { FizClient, DEFAULT_BASE_URL } from './client.js';
-export type { CallArgs, FizOptions } from './client.js';
+export type { CallArgs, FizOptions, FizResponseInfo } from './client.js';
 export * from './errors.js';
 export { OPERATIONS, API_VERSION } from './generated/operations.js';
 export type { OperationId } from './generated/operations.js';

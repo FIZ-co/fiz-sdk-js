@@ -188,8 +188,14 @@ new Fiz({
   timeout: 60_000,          // per attempt, ms
   fetch,                    // custom fetch
   appInfo: { name: 'my-shop', version: '1.2.0' }, // added to the User-Agent
+  onResponse: (r) => console.info(r.operationId, r.status, r.requestId), // every response
 });
 ```
+
+`onResponse` receives the operation, status, `requestId`, the `Idempotency-Key`,
+whether the API replayed an earlier result, the attempt number and the time
+to the response headers: enough to log the request id of every invoice you
+issue. An error it throws is ignored.
 
 Each method also takes per-call options: `idempotencyKey`, `maxRetries`,
 `timeout`, `signal` and `headers`.

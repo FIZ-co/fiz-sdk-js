@@ -471,6 +471,45 @@ describe('pagination', () => {
   });
 });
 
+describe('onResponse', () => {
+  it('reports every response, retries included', async () => {
+    vi.useFakeTimers();
+    const seen: unknown[] = [];
+    const { fiz } = mockFiz(
+      [
+        { status: 429, body: { statusCode: 429, message: 'slow' }, headers: { 'retry-after': '1', 'x-request-id': 'r1' } },
+        { status: 200, body: { id: 'inv1' }, headers: { 'x-request-id': 'r2', 'idempotent-replayed': 'true' } },
+      ],
+      { onResponse: (info) => seen.push(info) },
+    );
+    const result = fiz.invoices.issue('inv1', {}, { idempotencyKey: 'issue-1' });
+    await vi.runAllTimersAsync();
+    await result;
+    expect(seen).toEqual([
+      expect.objectContaining({
+        operationId: 'InvoicesController_issue',
+        method: 'POST',
+        path: '/invoices/{id}/issue',
+        status: 429,
+        requestId: 'r1',
+        idempotencyKey: 'issue-1',
+        replayed: false,
+        attempt: 1,
+      }),
+      expect.objectContaining({ status: 200, requestId: 'r2', replayed: true, attempt: 2 }),
+    ]);
+  });
+
+  it('never fails the call when the hook throws', async () => {
+    const { fiz } = mockFiz([{ status: 200, body: {} }], {
+      onResponse: () => {
+        throw new Error('logger down');
+      },
+    });
+    await expect(fiz.company.retrieve()).resolves.toEqual({});
+  });
+});
+
 describe('redirects', () => {
   it('are never followed on an API call', async () => {
     const { fiz, requests } = mockFiz([
