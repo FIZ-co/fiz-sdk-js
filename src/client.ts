@@ -170,7 +170,11 @@ export class FizClient {
         payload = await parseBody(response);
       } catch (error) {
         if (options.signal?.aborted) throw options.signal.reason ?? error;
-        bodyLost = error;
+        // An error status decides by itself; what arrived of its body is
+        // kept for the message. A success without its JSON is a lost
+        // response (issue() must not "succeed" with half an invoice).
+        if (!response.ok && error instanceof MalformedJsonBody) payload = error.text || undefined;
+        else bodyLost = error;
       }
 
       if (response.ok) {
@@ -307,18 +311,25 @@ function queryString(query: Record<string, unknown> | undefined): string {
   return text ? `?${text}` : '';
 }
 
+/**
+ * A body announced as JSON that is not JSON (cut off mid-way, or empty): the
+ * response is incomplete. `text` is what did arrive, kept for an error body.
+ */
+class MalformedJsonBody extends Error {
+  constructor(readonly text: string) {
+    super(text ? 'Response body is not valid JSON' : 'Response body announced as JSON is empty');
+  }
+}
+
 async function parseBody(response: Response): Promise<unknown> {
   const text = await response.text();
-  if (!text) return undefined;
   const type = response.headers.get('content-type') ?? '';
-  if (type.includes('json')) {
-    try {
-      return JSON.parse(text);
-    } catch {
-      return text;
-    }
+  if (!type.includes('json')) return text || undefined;
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new MalformedJsonBody(text);
   }
-  return text;
 }
 
 function retryAfterMs(headers: Headers): number | undefined {

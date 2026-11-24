@@ -226,11 +226,13 @@ FIZ_TEST_API_KEY=fiz_test_… npm run test:sandbox
 `src/generated/` is generated from `openapi/openapi.json`; never edit it by
 hand.
 
-**Releasing.** Bump the version in `package.json`, `src/version.ts` and
-`CHANGELOG.md`, merge, then push a tag: `git tag v0.1.1 && git push origin
-v0.1.1`. The Release workflow publishes through npm trusted publishing (no
-token) after `npm run check`; see the comment at the top of
-`.github/workflows/release.yml` for the one-time npm setup. When the API adds an operation, `npm test` fails until a resource
+**Releasing.** The first version is published by hand, because npm adds a
+trusted publisher only to an existing package: `npm login --auth-type=web &&
+npm publish --access public`, then set up the trusted publisher (top of
+`.github/workflows/release.yml`). After that, bump the version in
+`package.json`, `src/version.ts` and `CHANGELOG.md`, merge, and push a tag
+(`git tag v0.1.1 && git push origin v0.1.1`): the Release workflow publishes
+after `npm run check`, with no token. When the API adds an operation, `npm test` fails until a resource
 method wraps it.
 
 ## Português

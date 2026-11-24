@@ -297,6 +297,38 @@ describe('retries', () => {
     expect(requests.map((r) => r.headers['idempotency-key'])).toEqual(['order-9', 'order-9']);
   });
 
+  it('repeats an issue whose JSON body arrived broken, with the SAME key', async () => {
+    vi.useFakeTimers();
+    const broken = () =>
+      new Response('{"number":', { status: 200, headers: { 'content-type': 'application/json' } });
+    const { fiz, requests } = mockFiz([broken, { status: 200, body: { id: 'inv1', number: 'FT 2026/1' } }]);
+    const result = fiz.invoices.issue('inv1', {}, { idempotencyKey: 'issue-1' });
+    await vi.runAllTimersAsync();
+    await expect(result).resolves.toMatchObject({ number: 'FT 2026/1' });
+    expect(requests.map((r) => r.headers['idempotency-key'])).toEqual(['issue-1', 'issue-1']);
+  });
+
+  it.each([
+    ['broken JSON', '{"number":'],
+    ['an empty body announced as JSON', ''],
+  ])('never returns a success with %s: it raises with the key', async (_label, text) => {
+    const broken = () => new Response(text, { status: 200, headers: { 'content-type': 'application/json' } });
+    const { fiz } = mockFiz([broken], { maxRetries: 0 });
+    const error = await fiz.invoices.issue('inv1', {}, { idempotencyKey: 'issue-1' }).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(FizConnectionError);
+    expect(error).toMatchObject({ idempotencyKey: 'issue-1' });
+  });
+
+  it('keeps a broken error body as text and lets the status decide', async () => {
+    const broken = () =>
+      new Response('upstream <html> error', { status: 400, headers: { 'content-type': 'application/json' } });
+    const { fiz, requests } = mockFiz([broken]);
+    const error = await fiz.customers.create(customer).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(FizBadRequestError);
+    expect(error).toMatchObject({ messages: ['upstream <html> error'] });
+    expect(requests).toHaveLength(1);
+  });
+
   it.each([
     ['a 503 on a write', 503, {}, 1],
     ['a 429 with a Retry-After longer than a minute', 429, { 'retry-after': '120' }, 1],
