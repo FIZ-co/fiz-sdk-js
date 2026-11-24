@@ -50,6 +50,13 @@ async function createDraft() {
     items: [{ id: item.id, quantity: 1 }],
   });
   await writeFile('draft.pdf', Buffer.from(await fiz.invoices.downloadPdf(draft.id)));
+  // The revision is what makes the second run issue exactly this draft.
+  // Without one there is nothing to check against, so there is no command.
+  if (!draft.updatedAt) {
+    console.log(`Draft ${draft.id} saved to draft.pdf, but the API returned no revision for it.`);
+    console.log('Issue it from the FIZ app after reviewing it, or create it again.');
+    return;
+  }
   console.log(`Draft ${draft.id} saved to draft.pdf. Look at it, then issue it with:`);
   console.log(`  npx tsx examples/quickstart.ts --issue ${draft.id} ${draft.updatedAt}`);
 }

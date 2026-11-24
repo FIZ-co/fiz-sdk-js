@@ -63,6 +63,9 @@ const pdf = await fiz.invoices.downloadPdf(draft.id); // ArrayBuffer
 // Issuing is fiscal and irreversible with a production key: numbered, ATCUD,
 // reported to the AT. expectedUpdatedAt issues exactly the draft you looked
 // at, and refuses it if it changed since.
+// Without a revision there is nothing to check against: stop rather than
+// issue whatever the draft is by then.
+if (!draft.updatedAt) throw new Error('The draft came back without its revision.');
 const invoice = await fiz.invoices.issue(draft.id, { expectedUpdatedAt: draft.updatedAt });
 console.log(invoice.number, invoice.atcud);
 ```

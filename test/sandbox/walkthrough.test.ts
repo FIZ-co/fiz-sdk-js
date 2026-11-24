@@ -88,7 +88,10 @@ run('sandbox', () => {
       console.warn('The sandbox company is not ready to issue; issuing skipped.');
       return;
     }
-    const issued = await fiz.invoices.issue(created.id, { expectedUpdatedAt: updated.updatedAt });
+    // A revision is required: issuing without one would skip the check
+    // that the draft is the one just updated.
+    expect(updated.updatedAt).toBeTruthy();
+    const issued = await fiz.invoices.issue(created.id, { expectedUpdatedAt: updated.updatedAt ?? 'missing' });
     expect(issued.number).toBeTruthy();
     expect(issued.atcud).toBeTruthy();
     state.invoiceId = created.id;
@@ -108,7 +111,8 @@ run('sandbox', () => {
     );
     expect(note.number).toBeNull();
     const draft = await fiz.invoices.retrieve(note.id);
-    const issued = await fiz.invoices.issue(note.id, { expectedUpdatedAt: draft.updatedAt ?? undefined });
+    expect(draft.updatedAt).toBeTruthy();
+    const issued = await fiz.invoices.issue(note.id, { expectedUpdatedAt: draft.updatedAt ?? 'missing' });
     expect(issued.number).toBeTruthy();
     await fiz.invoices.retrieve(note.id);
   });
