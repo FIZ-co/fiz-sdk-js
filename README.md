@@ -192,10 +192,13 @@ new Fiz({
 });
 ```
 
-`onResponse` receives the operation, status, `requestId`, the `Idempotency-Key`,
-whether the API replayed an earlier result, the attempt number and the time
-to the response headers: enough to log the request id of every invoice you
-issue. An error it throws is ignored.
+`onResponse` is called with every response to an API operation, retries
+included (the file download behind `downloadPdf` is not an operation and is
+not reported). It receives the operation, status, `requestId`, the
+`Idempotency-Key`, whether the API replayed an earlier result, the attempt
+number and the time to the response headers: enough to log the request id of
+every invoice you issue. It may be async; the call does not wait for it, and
+whatever it throws or rejects with is ignored.
 
 Each method also takes per-call options: `idempotencyKey`, `maxRetries`,
 `timeout`, `signal` and `headers`.

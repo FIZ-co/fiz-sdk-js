@@ -48,11 +48,13 @@ export interface FizOptions {
    */
   dangerouslyAllowBrowser?: boolean;
   /**
-   * Called with every response the API sends, retries included: for logging
-   * the request id of each call (support, audit) or measuring latency. An
-   * error thrown here is ignored; it never fails the call.
+   * Called with every response to an API operation, retries included (not
+   * the file download behind `downloadPdf`): for logging the request id of
+   * each call (support, audit) or measuring latency. It may be async; the
+   * call does not wait for it. Whatever it throws or rejects with is
+   * ignored: it never fails the call, and never crashes the process.
    */
-  onResponse?: (response: FizResponseInfo) => void;
+  onResponse?: (response: FizResponseInfo) => unknown;
 }
 
 /** What `onResponse` receives for each response. */
@@ -291,10 +293,16 @@ export class FizClient {
 
   private report(info: FizResponseInfo): void {
     if (!this.onResponse) return;
+    // A logging hook must never fail or retry the call it observes. An async
+    // one is not awaited, but its rejection is caught: unhandled, it would
+    // end a Node process after the write already happened.
     try {
-      this.onResponse(info);
+      const result = this.onResponse(info);
+      if (result && typeof (result as Promise<unknown>).catch === 'function') {
+        (result as Promise<unknown>).catch(() => undefined);
+      }
     } catch {
-      // A logging hook must never fail or retry the call it observes.
+      // ignored, as above
     }
   }
 

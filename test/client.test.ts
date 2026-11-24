@@ -500,6 +500,39 @@ describe('onResponse', () => {
     ]);
   });
 
+  it('never fails the call, nor leaves a rejection, when an async hook rejects', async () => {
+    const { fiz } = mockFiz([{ status: 200, body: { id: 'inv1' } }], {
+      onResponse: async () => {
+        throw new Error('logger down');
+      },
+    });
+    const unhandled: unknown[] = [];
+    const listener = (reason: unknown) => unhandled.push(reason);
+    process.on('unhandledRejection', listener);
+    try {
+      await expect(fiz.invoices.issue('inv1')).resolves.toEqual({ id: 'inv1' });
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      expect(unhandled).toEqual([]);
+    } finally {
+      process.off('unhandledRejection', listener);
+    }
+  });
+
+  it('does not wait for an async hook', async () => {
+    let finished = false;
+    const { fiz } = mockFiz([{ status: 200, body: {} }], {
+      onResponse: () =>
+        new Promise<void>((resolve) =>
+          setTimeout(() => {
+            finished = true;
+            resolve();
+          }, 50),
+        ),
+    });
+    await fiz.company.retrieve();
+    expect(finished).toBe(false);
+  });
+
   it('never fails the call when the hook throws', async () => {
     const { fiz } = mockFiz([{ status: 200, body: {} }], {
       onResponse: () => {
