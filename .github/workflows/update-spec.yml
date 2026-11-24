@@ -1,7 +1,9 @@
 name: Update API spec
 
-# Opens a pull request when https://api.fiz.co/-json changes. The coverage
-# test fails on that PR until every new operation has a resource method.
+# Opens a pull request when https://api.fiz.co/-json changes, and runs the
+# checks here: a pull request pushed with GITHUB_TOKEN does not start the CI
+# workflow. The job fails (and the PR says so) until every new operation has
+# a resource method.
 on:
   schedule:
     - cron: '17 6 * * *'
@@ -22,6 +24,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run update-spec
+      - name: Check against the new spec
+        id: check
+        continue-on-error: true
+        run: npm run check
       - name: Open or update the pull request
         env:
           GH_TOKEN: ${{ github.token }}
@@ -39,4 +45,7 @@ jobs:
           gh pr view "$branch" >/dev/null 2>&1 || gh pr create \
             --head "$branch" \
             --title "chore(spec): update to the current API document" \
-            --body "The API document at https://api.fiz.co/-json changed. If the coverage test fails, wrap the new operations in a resource method. Check the API changelog: https://api.fiz.co/docs/changelog"
+            --body "The API document at https://api.fiz.co/-json changed. Checks in the update run: ${{ steps.check.outcome }}. If they failed, wrap the new operations in a resource method. API changelog: https://api.fiz.co/docs/changelog"
+      - name: Fail when the checks failed
+        if: steps.check.outcome == 'failure'
+        run: exit 1

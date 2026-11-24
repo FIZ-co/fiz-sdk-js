@@ -1,6 +1,6 @@
-import { paginateByOffset } from '../pagination.js';
+import { paginateByOffset, type ListAllQuery } from '../pagination.js';
 import type { QueryParams, RequestBody, RequestOptions } from '../types.js';
-import { DEFAULT_PAGE_SIZE, Resource, type ListAllQuery } from './base.js';
+import { Resource } from './base.js';
 
 type CustomerListQuery = QueryParams<'CustomersController_findAll'>;
 
@@ -14,11 +14,7 @@ export class Customers extends Resource {
   }
 
   listAll(query: ListAllQuery<CustomerListQuery> = {}, options?: RequestOptions) {
-    const { pageSize = DEFAULT_PAGE_SIZE, ...filters } = query;
-    return paginateByOffset(
-      (offset, limit) => this.list({ ...filters, offset, limit } as CustomerListQuery, options),
-      { limit: pageSize },
-    );
+    return paginateByOffset((page: CustomerListQuery) => this.list(page, options), query);
   }
 
   retrieve(id: string, options?: RequestOptions) {
@@ -52,11 +48,7 @@ export class Items extends Resource {
   }
 
   listAll(query: ListAllQuery<ItemListQuery> = {}, options?: RequestOptions) {
-    const { pageSize = DEFAULT_PAGE_SIZE, ...filters } = query;
-    return paginateByOffset(
-      (offset, limit) => this.list({ ...filters, offset, limit } as ItemListQuery, options),
-      { limit: pageSize },
-    );
+    return paginateByOffset((page: ItemListQuery) => this.list(page, options), query);
   }
 
   retrieve(id: string, options?: RequestOptions) {
