@@ -54,6 +54,20 @@ describe('credentials', () => {
     expect(() => new Fiz({ fetch })).toThrow(/FIZ_API_KEY/);
   });
 
+  it('refuses to run in a browser unless explicitly allowed', () => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('document', {});
+    try {
+      expect(() => new Fiz({ apiKey: 'fiz_live_x', fetch })).toThrow(/for servers/);
+      expect(() => new Fiz({ accessToken: 'fiz_oat_x', fetch })).toThrow(/for servers/);
+      expect(new Fiz({ apiKey: 'fiz_live_x', fetch, dangerouslyAllowBrowser: true }).environment).toBe(
+        'production',
+      );
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('reports the environment from the key prefix', () => {
     expect(new Fiz({ apiKey: 'fiz_test_x', fetch }).environment).toBe('sandbox');
     expect(new Fiz({ apiKey: 'fiz_live_x', fetch }).environment).toBe('production');

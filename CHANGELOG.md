@@ -20,4 +20,5 @@ First release.
 - An `Idempotency-Key` the API would refuse (empty, spaces, over 128
   characters) is refused before sending; a response whose body is cut off
   is retried with the same key, or reported with it.
-- Node.js 20.3 or later.
+- Node.js 20.3 or later. Refuses to start in a browser unless
+  `dangerouslyAllowBrowser: true`.

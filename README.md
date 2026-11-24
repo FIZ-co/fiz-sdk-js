@@ -17,7 +17,8 @@ npm install @fiz-co/sdk
 ```
 
 Node.js 20.3 or later (CI tests 20, 22 and 24). Server-side only: an API key acts for the
-whole company and must never reach a browser.
+whole company and must never reach a browser, so the client refuses to start in one
+(`dangerouslyAllowBrowser: true` overrides it).
 
 ## Quickstart
 
