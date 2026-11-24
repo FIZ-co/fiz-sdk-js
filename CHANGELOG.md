@@ -3,7 +3,7 @@
 Versions follow [semver](https://semver.org). Changes to the API itself are
 in the [API changelog](https://api.fiz.co/docs/changelog).
 
-## 0.1.0 — unreleased
+## 0.1.0 — 2026-11-24
 
 First release.
 
