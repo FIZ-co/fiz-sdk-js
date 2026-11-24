@@ -16,7 +16,11 @@ import { VERSION } from './version.js';
 
 export const DEFAULT_BASE_URL = 'https://api.fiz.co';
 const SANDBOX_KEY_PREFIX = 'fiz_test_';
+/** A longer Retry-After is not waited for: the error is thrown instead. */
 const MAX_RETRY_AFTER_MS = 60_000;
+const MAX_REDIRECTS = 5;
+/** What the API accepts as an Idempotency-Key: 1–128 visible ASCII characters. */
+const IDEMPOTENCY_KEY_PATTERN = /^[\x21-\x7e]{1,128}$/;
 
 export interface FizOptions {
   /**
@@ -37,6 +41,12 @@ export interface FizOptions {
   fetch?: typeof fetch;
   /** Your integration's name and version, added to the User-Agent. */
   appInfo?: { name: string; version?: string };
+  /**
+   * Allow running in a browser. Off by default: an API key or access token
+   * acts for the whole company, and in a browser every visitor can read it.
+   * Turn it on only for a page that only its key's owner can open.
+   */
+  dangerouslyAllowBrowser?: boolean;
 }
 
 /** Arguments of `call()`: only the parts the operation takes. */
@@ -63,6 +73,11 @@ export class FizClient {
   private readonly userAgent: string;
 
   constructor(options: FizOptions = {}) {
+    if (isBrowser() && !options.dangerouslyAllowBrowser) {
+      throw new FizError(
+        'The FIZ SDK is for servers: in a browser, every visitor could read the API key or token. Call FIZ from your backend, or pass dangerouslyAllowBrowser: true if only the key owner can open this page.',
+      );
+    }
     if (options.apiKey && options.accessToken) {
       throw new FizError('Pass either apiKey or accessToken, not both.');
     }
@@ -82,10 +97,7 @@ export class FizClient {
     const fetchImpl = options.fetch ?? globalThis.fetch;
     if (!fetchImpl) throw new FizError('No fetch available: pass options.fetch.');
     this.fetchImpl = fetchImpl.bind(globalThis);
-    const app = options.appInfo
-      ? ` ${options.appInfo.name}${options.appInfo.version ? `/${options.appInfo.version}` : ''}`
-      : '';
-    this.userAgent = `fiz-sdk-js/${VERSION}${runtime()}${app}`;
+    this.userAgent = userAgent(options.appInfo);
   }
 
   /**
@@ -103,18 +115,27 @@ export class FizClient {
 
     const path = expandPath(operation.path, args.path as Record<string, unknown> | undefined);
     const url = this.baseUrl + path + queryString(args.query as Record<string, unknown> | undefined);
-    const idempotencyKey = operation.idempotent
-      ? (options.idempotencyKey ?? globalThis.crypto.randomUUID())
-      : undefined;
-    const headers: Record<string, string> = {
+    // A Headers object, not a plain one: header names are case-insensitive, and
+    // a caller's `Idempotency-Key` next to our `idempotency-key` in a plain
+    // object would be sent joined ("a, b") and refused by the API.
+    const headers = new Headers({
       accept: 'application/json',
       'user-agent': this.userAgent,
       ...this.authHeaders,
-      ...options.headers,
-    };
-    if (idempotencyKey) headers['idempotency-key'] = idempotencyKey;
+    });
+    for (const [name, value] of Object.entries(options.headers ?? {})) headers.set(name, value);
+    // One key for the whole call, every retry included. A key the caller gave
+    // (option or header) is checked here: an empty one would send no header
+    // while the retry logic still treated the write as safe to repeat.
+    const idempotencyKey = operation.idempotent
+      ? checkedIdempotencyKey(
+          options.idempotencyKey ?? headers.get('idempotency-key') ?? undefined,
+        )
+      : undefined;
+    if (idempotencyKey) headers.set('idempotency-key', idempotencyKey);
+    else headers.delete('idempotency-key');
     const hasBody = args.body !== undefined;
-    if (hasBody) headers['content-type'] = 'application/json';
+    if (hasBody) headers.set('content-type', 'application/json');
     const body = hasBody ? JSON.stringify(args.body) : undefined;
 
     const maxRetries = options.maxRetries ?? this.maxRetries;
@@ -125,40 +146,70 @@ export class FizClient {
 
     for (let attempt = 0; ; attempt++) {
       const canRetry = attempt < maxRetries;
+      // Two ways an attempt can go without a usable answer, decided apart:
+      //  - no status at all (the request may or may not have arrived): repeat
+      //    only what is safe to repeat blind;
+      //  - a status whose body was cut off: the status still decides, exactly
+      //    as with a body (a 503 or 429 keeps its own rules and Retry-After).
+      //    Only a success whose body is lost is a lost response, which the same
+      //    Idempotency-Key recovers.
       let response: Response;
+      let payload: unknown;
+      let bodyLost: unknown;
       try {
         response = await this.attempt(url, operation.method, headers, body, timeout, options.signal);
       } catch (error) {
         if (options.signal?.aborted) throw options.signal.reason ?? error;
-        const failure =
-          error instanceof DOMException && error.name === 'TimeoutError'
-            ? new FizTimeoutError(
-                `${operation.method} ${path} timed out after ${timeout} ms`,
-                idempotencyKey,
-                { cause: error },
-              )
-            : new FizConnectionError(
-                `${operation.method} ${path} failed: no response (${errorText(error)})`,
-                idempotencyKey,
-                { cause: error },
-              );
-        if (!repeatable || !canRetry) throw failure;
+        if (!repeatable || !canRetry) {
+          throw noResponseError(error, `${operation.method} ${path}`, timeout, idempotencyKey);
+        }
         await sleep(backoff(attempt), options.signal);
         continue;
       }
+      try {
+        const text = await response.text();
+        // Every operation answers a success in JSON (test/coverage.test.ts
+        // holds the API document to that), so a success is parsed as JSON
+        // whatever Content-Type says, and one that does not parse is a lost
+        // response: issue() must not "succeed" with half an invoice or an
+        // HTML page. An error body is read loosely; its status decides.
+        if (response.ok) payload = JSON.parse(text);
+        else payload = parseErrorBody(text);
+      } catch (error) {
+        if (options.signal?.aborted) throw options.signal.reason ?? error;
+        bodyLost = error;
+      }
 
-      if (response.ok) return (await parseBody(response)) as ResponseBody<K>;
+      if (response.ok) {
+        if (bodyLost === undefined) return payload as ResponseBody<K>;
+        if (!repeatable || !canRetry) {
+          throw noResponseError(bodyLost, `${operation.method} ${path}`, timeout, idempotencyKey);
+        }
+        await sleep(backoff(attempt), options.signal);
+        continue;
+      }
+      if (isRedirect(response)) {
+        // Not followed: the credentials go to the API's origin only.
+        throw new FizError(
+          `${operation.method} ${path} answered with a redirect${location(response)}; it was not followed.`,
+        );
+      }
 
       const error = FizApiError.from({
         status: response.status,
-        body: await parseBody(response),
+        body: payload,
         headers: response.headers,
         method: operation.method,
         path,
         idempotencyKey,
       });
       const retryAfter = retryAfterMs(response.headers);
-      if (!canRetry || !shouldRetry(response.status, operation.method, idempotencyKey, retryAfter)) {
+      if (
+        !canRetry ||
+        // Waiting less than the server asked would only earn another refusal.
+        (retryAfter !== undefined && retryAfter > MAX_RETRY_AFTER_MS) ||
+        !shouldRetry(response.status, operation.method, idempotencyKey, retryAfter)
+      ) {
         throw error;
       }
       await sleep(retryAfter ?? backoff(attempt), options.signal);
@@ -167,28 +218,41 @@ export class FizClient {
 
   /**
    * Downloads a file the API linked to (a PDF, an export). Credentials are
-   * sent only when the link is on the API's own origin.
+   * sent only to the API's own origin, checked again on every redirect: fetch
+   * would otherwise carry `x-api-key` to wherever a redirect points.
    */
   async download(fileUrl: string, options: Pick<RequestOptions, 'timeout' | 'signal'> = {}): Promise<ArrayBuffer> {
-    const sameOrigin = new URL(fileUrl).origin === new URL(this.baseUrl).origin;
-    const response = await this.attempt(
-      fileUrl,
-      'GET',
-      sameOrigin ? { 'user-agent': this.userAgent, ...this.authHeaders } : {},
-      undefined,
-      options.timeout ?? this.timeout,
-      options.signal,
-    );
-    if (!response.ok) {
-      throw new FizError(`Downloading ${new URL(fileUrl).pathname} failed with ${response.status}`);
+    const apiOrigin = new URL(this.baseUrl).origin;
+    let url = new URL(fileUrl);
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+      const response = await this.attempt(
+        url.href,
+        'GET',
+        url.origin === apiOrigin ? { 'user-agent': this.userAgent, ...this.authHeaders } : {},
+        undefined,
+        options.timeout ?? this.timeout,
+        options.signal,
+      );
+      if (isRedirect(response)) {
+        const next = response.headers.get('location');
+        if (!next) {
+          throw new FizError(`Downloading ${url.pathname}: a redirect this runtime does not expose`);
+        }
+        url = new URL(next, url);
+        continue;
+      }
+      if (!response.ok) {
+        throw new FizError(`Downloading ${url.pathname} failed with ${response.status}`);
+      }
+      return response.arrayBuffer();
     }
-    return response.arrayBuffer();
+    throw new FizError(`Downloading ${new URL(fileUrl).pathname}: more than ${MAX_REDIRECTS} redirects`);
   }
 
   private attempt(
     url: string,
     method: string,
-    headers: Record<string, string>,
+    headers: HeadersInit,
     body: string | undefined,
     timeout: number,
     signal: AbortSignal | undefined,
@@ -198,6 +262,9 @@ export class FizClient {
       method,
       headers,
       body,
+      // Never followed automatically: a redirect keeps custom headers such as
+      // x-api-key, whatever origin it points to.
+      redirect: 'manual',
       signal: signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal,
     });
   }
@@ -247,18 +314,13 @@ function queryString(query: Record<string, unknown> | undefined): string {
   return text ? `?${text}` : '';
 }
 
-async function parseBody(response: Response): Promise<unknown> {
-  const text = await response.text();
-  if (!text) return undefined;
-  const type = response.headers.get('content-type') ?? '';
-  if (type.includes('json')) {
-    try {
-      return JSON.parse(text);
-    } catch {
-      return text;
-    }
+/** An error response's body: its JSON when it is JSON, else the text, if any. */
+function parseErrorBody(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text || undefined;
   }
-  return text;
 }
 
 function retryAfterMs(headers: Headers): number | undefined {
@@ -267,7 +329,7 @@ function retryAfterMs(headers: Headers): number | undefined {
   const seconds = Number(value);
   const ms = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(value) - Date.now();
   if (!Number.isFinite(ms)) return undefined;
-  return Math.min(Math.max(ms, 0), MAX_RETRY_AFTER_MS);
+  return Math.max(ms, 0);
 }
 
 /** 0.5 s, 1 s, 2 s, … capped at 8 s, with ±25 % jitter. */
@@ -296,11 +358,57 @@ function envApiKey(): string | undefined {
   return env?.FIZ_API_KEY || undefined;
 }
 
-function runtime(): string {
-  const versions = (globalThis as { process?: { versions?: { node?: string } } }).process?.versions;
-  return versions?.node ? ` node/${versions.node}` : '';
+/** `fiz-sdk-js/<version> node/<version> <app>/<version>`, leaving out what is unknown. */
+function userAgent(appInfo: FizOptions['appInfo']): string {
+  const parts = [`fiz-sdk-js/${VERSION}`];
+  const node = (globalThis as { process?: { versions?: { node?: string } } }).process?.versions?.node;
+  if (node) parts.push(`node/${node}`);
+  if (appInfo) parts.push(appInfo.version ? `${appInfo.name}/${appInfo.version}` : appInfo.name);
+  return parts.join(' ');
 }
 
-function errorText(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
+/** The error for an attempt that got no response: a timeout or a network failure. */
+function noResponseError(
+  error: unknown,
+  request: string,
+  timeout: number,
+  idempotencyKey: string | undefined,
+): FizConnectionError {
+  if (error instanceof DOMException && error.name === 'TimeoutError') {
+    return new FizTimeoutError(`${request} timed out after ${timeout} ms`, idempotencyKey, { cause: error });
+  }
+  const reason = error instanceof Error ? error.message : String(error);
+  return new FizConnectionError(`${request} failed: no complete response (${reason})`, idempotencyKey, {
+    cause: error,
+  });
+}
+
+/**
+ * The caller's Idempotency-Key, refused before sending when the API would
+ * refuse it; a new UUID when there is none.
+ */
+function checkedIdempotencyKey(given: string | undefined): string {
+  if (given === undefined) return globalThis.crypto.randomUUID();
+  if (!IDEMPOTENCY_KEY_PATTERN.test(given)) {
+    throw new FizError(
+      'idempotencyKey must be 1 to 128 visible ASCII characters (no spaces); omit it to have one generated.',
+    );
+  }
+  return given;
+}
+
+/** A 3xx, or the opaque redirect a browser returns for `redirect: 'manual'`. */
+function isRedirect(response: Response): boolean {
+  return response.type === 'opaqueredirect' || (response.status >= 300 && response.status < 400);
+}
+
+function location(response: Response): string {
+  const target = response.headers.get('location');
+  return target ? ` to ${target}` : '';
+}
+
+/** A page in a browser (not Node, Deno, Bun or a worker without a document). */
+function isBrowser(): boolean {
+  const scope = globalThis as { window?: unknown; document?: unknown };
+  return typeof scope.window !== 'undefined' && typeof scope.document !== 'undefined';
 }

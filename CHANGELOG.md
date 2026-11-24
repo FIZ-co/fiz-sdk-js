@@ -14,3 +14,11 @@ First release.
 - Errors as classes with `status`, `code`, `messages` and `requestId`.
 - `listAll` iterators over every list, and PDF downloads.
 - API key or OAuth access token; a `fiz_test_` key reaches the sandbox.
+- Credentials go to the API's origin only: redirects are never followed
+  on API calls, and a file download drops them when a redirect leaves the
+  API origin.
+- An `Idempotency-Key` the API would refuse (empty, spaces, over 128
+  characters) is refused before sending; a response whose body is cut off
+  is retried with the same key, or reported with it.
+- Node.js 20.3 or later. Refuses to start in a browser unless
+  `dangerouslyAllowBrowser: true`.

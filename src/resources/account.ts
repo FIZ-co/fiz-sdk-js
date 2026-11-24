@@ -1,6 +1,11 @@
-import { paginateByOffset, paginateByPage } from '../pagination.js';
+import {
+  paginateByOffset,
+  paginateByPage,
+  type ListAllQuery,
+  type PagedListAllQuery,
+} from '../pagination.js';
 import type { QueryParams, RequestBody, RequestOptions } from '../types.js';
-import { DEFAULT_PAGE_SIZE, Resource, type ListAllQuery } from './base.js';
+import { Resource } from './base.js';
 
 /** The connected company. */
 export class Company extends Resource {
@@ -34,11 +39,7 @@ export class Expenses extends Resource {
   }
 
   listAll(query: ListAllQuery<ExpenseListQuery> = {}, options?: RequestOptions) {
-    const { pageSize = DEFAULT_PAGE_SIZE, ...filters } = query;
-    return paginateByOffset(
-      (offset, limit) => this.list({ ...filters, offset, limit } as ExpenseListQuery, options),
-      { limit: pageSize },
-    );
+    return paginateByOffset((page: ExpenseListQuery) => this.list(page, options), query);
   }
 
   stats(query?: QueryParams<'ExpensesController_stats'>, options?: RequestOptions) {
@@ -58,15 +59,8 @@ export class Bank extends Resource {
     return this.client.call('BankController_getTransactions', { query }, options);
   }
 
-  transactionsAll(
-    query: Omit<TransactionQuery, 'page' | 'pageSize'> & { pageSize?: number },
-    options?: RequestOptions,
-  ) {
-    const { pageSize = DEFAULT_PAGE_SIZE, ...filters } = query;
-    return paginateByPage(
-      (page, size) => this.transactions({ ...filters, page, pageSize: size } as TransactionQuery, options),
-      { pageSize },
-    );
+  transactionsAll(query: PagedListAllQuery<TransactionQuery>, options?: RequestOptions) {
+    return paginateByPage((page: TransactionQuery) => this.transactions(page, options), query);
   }
 }
 

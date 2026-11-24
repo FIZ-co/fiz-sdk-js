@@ -1,7 +1,17 @@
 name: Release
 
-# Publishes to npm when a version tag (v1.2.3) is pushed. Needs the NPM_TOKEN
-# secret, and a public repository for provenance.
+# Publishes to npm when a version tag (v1.2.3) is pushed, through npm trusted
+# publishing: GitHub's OIDC token proves this workflow to npm, so there is no
+# npm token anywhere, and npm attaches provenance on its own (public repo).
+#
+# One-time setup, in this order (README, "Releasing"):
+#  1. Publish the first version by hand (`npm publish --access public`): npm
+#     adds a trusted publisher only to a package that already exists.
+#  2. On npmjs.com: @fiz-co/sdk → Settings → Trusted Publisher → GitHub
+#     Actions: organization FIZ-co, repository fiz-sdk-js, workflow
+#     release.yml, environment npm.
+# The tag of a version that is already on npm (the hand-published one) is
+# skipped here rather than failing.
 on:
   push:
     tags: ['v*']
@@ -13,16 +23,29 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: npm
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Trusted publishing needs Node 22.14+ and npm 11.5.1+.
+          node-version: 24
           registry-url: https://registry.npmjs.org
           cache: npm
+      - name: npm 11 (trusted publishing)
+        run: npm install -g npm@11 && npm --version
       - run: npm ci
       - name: Tag matches package.json
         run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
-      - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Skip a version already on npm
+        id: published
+        run: |
+          spec="$(node -p 'const p = require("./package.json"); `${p.name}@${p.version}`')"
+          if npm view "$spec" version >/dev/null 2>&1; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$spec is already on npm; nothing to publish."
+          fi
+      - name: Publish
+        if: steps.published.outputs.already != 'true'
+        # prepublishOnly runs `npm run check` (typecheck, tests, build) first.
+        run: npm publish --access public

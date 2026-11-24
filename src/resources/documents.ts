@@ -1,7 +1,6 @@
-import { paginateByOffset } from '../pagination.js';
+import { paginateByOffset, type ListAllQuery } from '../pagination.js';
 import type { QueryParams, RequestBody, RequestOptions } from '../types.js';
-import { DEFAULT_PAGE_SIZE, Resource, type ListAllQuery } from './base.js';
-import { requireUrl } from './invoices.js';
+import { Resource, requireUrl } from './base.js';
 
 type ProposalListQuery = QueryParams<'ProposalsController_findAll'>;
 
@@ -19,11 +18,7 @@ export class Proposals extends Resource {
   }
 
   listAll(query: ListAllQuery<ProposalListQuery> = {}, options?: RequestOptions) {
-    const { pageSize = DEFAULT_PAGE_SIZE, ...filters } = query;
-    return paginateByOffset(
-      (offset, limit) => this.list({ ...filters, offset, limit } as ProposalListQuery, options),
-      { limit: pageSize },
-    );
+    return paginateByOffset((page: ProposalListQuery) => this.list(page, options), query);
   }
 
   retrieve(id: string, options?: RequestOptions) {
@@ -66,11 +61,10 @@ export class TransportDocuments extends Resource {
   }
 
   listAll(query: ListAllQuery<TransportListQuery> = {}, options?: RequestOptions) {
-    const { pageSize = DEFAULT_PAGE_SIZE, ...filters } = query;
+    // The API document does not describe this response yet: items are `unknown`.
     return paginateByOffset(
-      (offset, limit) =>
-        this.list({ ...filters, offset, limit } as TransportListQuery, options) as Promise<unknown[]>,
-      { limit: pageSize },
+      (page: TransportListQuery) => this.list(page, options) as Promise<unknown[]>,
+      query,
     );
   }
 

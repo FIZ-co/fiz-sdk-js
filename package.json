@@ -53,7 +53,7 @@
   ],
   "sideEffects": false,
   "engines": {
-    "node": ">=20"
+    "node": ">=20.3.0"
   },
   "scripts": {
     "generate": "node scripts/generate.mjs",
@@ -62,8 +62,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:sandbox": "vitest run --config vitest.sandbox.config.ts",
-    "check": "npm run typecheck && npm test && npm run build",
-    "prepublishOnly": "npm run check"
+    "check": "npm run typecheck && npm run check:readme && npm test && npm run build",
+    "prepublishOnly": "npm run check",
+    "check:readme": "node scripts/check-readme.mjs && tsc -p tsconfig.readme.json"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

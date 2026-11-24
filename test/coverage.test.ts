@@ -34,3 +34,24 @@ describe('generated operation table', () => {
     expect(OPERATIONS.VatController_calculate.idempotent).toBe(false);
   });
 });
+
+describe('response bodies', () => {
+  it('every success of every operation is JSON, as the client assumes', () => {
+    // The client parses a success as JSON and treats anything else as a lost
+    // response. An operation answering something else (a file, CSV) needs
+    // the client taught first.
+    const notJson: string[] = [];
+    for (const [path, item] of Object.entries(spec.paths)) {
+      for (const [method, op] of Object.entries(item as Record<string, { responses?: Record<string, { content?: Record<string, unknown> }> }>)) {
+        for (const [status, response] of Object.entries(op.responses ?? {})) {
+          if (!status.startsWith('2')) continue;
+          const types = Object.keys(response.content ?? {});
+          if (types.length === 0 || types.some((t) => t !== 'application/json')) {
+            notJson.push(`${method.toUpperCase()} ${path} ${status}: ${types.join(', ') || 'no body'}`);
+          }
+        }
+      }
+    }
+    expect(notJson).toEqual([]);
+  });
+});

@@ -1,9 +1,8 @@
-import { paginateByOffset } from '../pagination.js';
+import { paginateByOffset, type ListAllQuery } from '../pagination.js';
 import type { QueryParams, RequestBody, RequestOptions, ResponseBody } from '../types.js';
-import { DEFAULT_PAGE_SIZE, Resource, type ListAllQuery } from './base.js';
+import { Resource, requireUrl } from './base.js';
 
-type ListQuery = QueryParams<'InvoicesController_findAll'>;
-export type InvoiceListItem = ResponseBody<'InvoicesController_findAll'>[number];
+type InvoiceListQuery = QueryParams<'InvoicesController_findAll'>;
 
 /**
  * Invoices, simplified invoices, invoice-receipts and the receipts and credit
@@ -17,17 +16,13 @@ export class Invoices extends Resource {
   }
 
   /** One page of documents, newest first by default. */
-  list(query?: ListQuery, options?: RequestOptions) {
+  list(query?: InvoiceListQuery, options?: RequestOptions) {
     return this.client.call('InvoicesController_findAll', { query }, options);
   }
 
   /** Every document matching the filters, fetching pages as you iterate. */
-  listAll(query: ListAllQuery<ListQuery> = {}, options?: RequestOptions): AsyncGenerator<InvoiceListItem> {
-    const { pageSize = DEFAULT_PAGE_SIZE, ...filters } = query;
-    return paginateByOffset(
-      (offset, limit) => this.list({ ...filters, offset, limit } as ListQuery, options),
-      { limit: pageSize },
-    );
+  listAll(query: ListAllQuery<InvoiceListQuery> = {}, options?: RequestOptions) {
+    return paginateByOffset((page: InvoiceListQuery) => this.list(page, options), query);
   }
 
   retrieve(id: string, options?: RequestOptions) {
@@ -84,8 +79,12 @@ export class Invoices extends Resource {
 export class CreditNotes extends Resource {
   /**
    * Creates a credit note. Without `items` it reverses the invoice in full;
-   * with `items` it changes the quantity or price of the given lines. With
-   * `issue: true` it is issued at once: **fiscal and irreversible**.
+   * with `items` it changes the quantity or price of the given lines.
+   *
+   * **Issued at once by default**: without `issue: false` the note is
+   * numbered and reported to the AT in this call, which with a production key
+   * is fiscal and irreversible. Pass `issue: false` for a draft, then
+   * `invoices.issue(note.id)` once it has been reviewed.
    */
   create(body: RequestBody<'InvoicesController_createCreditNote'>, options?: RequestOptions) {
     return this.client.call('InvoicesController_createCreditNote', { body }, options);
@@ -109,11 +108,7 @@ export class RecurringInvoices extends Resource {
   }
 
   listAll(query: ListAllQuery<ScheduledListQuery> = {}, options?: RequestOptions) {
-    const { pageSize = DEFAULT_PAGE_SIZE, ...filters } = query;
-    return paginateByOffset(
-      (offset, limit) => this.list({ ...filters, offset, limit } as ScheduledListQuery, options),
-      { limit: pageSize },
-    );
+    return paginateByOffset((page: ScheduledListQuery) => this.list(page, options), query);
   }
 
   retrieve(id: string, options?: RequestOptions) {
@@ -129,9 +124,4 @@ export class RecurringInvoices extends Resource {
   delete(id: string, options?: RequestOptions) {
     return this.client.call('ScheduledInvoicesController_delete', { path: { id } }, options);
   }
-}
-
-export function requireUrl(url: string | null | undefined, id: string): string {
-  if (!url) throw new Error(`The API returned no PDF link for ${id}`);
-  return url;
 }

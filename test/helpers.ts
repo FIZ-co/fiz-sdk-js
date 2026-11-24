@@ -2,6 +2,7 @@ import { vi } from 'vitest';
 import { Fiz } from '../src/index.js';
 
 export interface Recorded {
+  redirect: RequestRedirect | undefined;
   method: string;
   url: URL;
   headers: Record<string, string>;
@@ -10,7 +11,8 @@ export interface Recorded {
 
 type Reply =
   | { status: number; body?: unknown; headers?: Record<string, string> }
-  | Error;
+  | Error
+  | (() => Response);
 
 /** A Fiz client whose fetch answers from `replies` in order and records every request. */
 export function mockFiz(replies: Reply[], options: ConstructorParameters<typeof Fiz>[0] = {}) {
@@ -18,16 +20,16 @@ export function mockFiz(replies: Reply[], options: ConstructorParameters<typeof 
   const queue = [...replies];
   const fetch = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
     requests.push({
+      redirect: init?.redirect,
       method: init?.method ?? 'GET',
       url: new URL(String(input)),
-      headers: Object.fromEntries(
-        Object.entries((init?.headers ?? {}) as Record<string, string>).map(([k, v]) => [k.toLowerCase(), v]),
-      ),
+      headers: Object.fromEntries(new Headers(init?.headers).entries()),
       body: typeof init?.body === 'string' ? JSON.parse(init.body) : init?.body,
     });
     const reply = queue.shift();
     if (!reply) throw new Error('No reply queued for this request');
     if (reply instanceof Error) throw reply;
+    if (typeof reply === 'function') return reply();
     return new Response(reply.body === undefined ? null : JSON.stringify(reply.body), {
       status: reply.status,
       headers: { 'content-type': 'application/json', ...reply.headers },
