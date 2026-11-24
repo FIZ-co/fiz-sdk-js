@@ -1063,60 +1063,60 @@ export type components = {
              * @description Series identifier
              * @example 68483ba7a19e44171e3d080a
              */
-            ref: string;
+            ref: string | null;
             /**
              * @description Series name
              * @example FIZ20255de3d61a
              */
-            name: string;
+            name: string | null;
         };
         CustomerDataDto: {
             /**
              * @description Tax number (NIF)
              * @example 303741791
              */
-            taxpayerNumber: string;
+            taxpayerNumber: string | null;
             /**
              * @description Customer name
              * @example Petr Kutis
              */
-            name: string;
+            name: string | null;
             /**
              * @description Customer email
              * @example test@test.com
              */
-            email: string;
+            email: string | null;
             /**
              * @description Customer country
              * @example PT
              */
-            country: string;
+            country: string | null;
             /**
              * @description Customer phone
              * @example
              */
-            phone: string;
+            phone: string | null;
         };
         CustomerDto: {
             /**
              * @description Customer identifier
              * @example 6863b1513117c5892ff55296
              */
-            ref: string;
+            ref: string | null;
             /** @description Customer data */
-            data: components["schemas"]["CustomerDataDto"];
+            data: components["schemas"]["CustomerDataDto"] | (never | null);
         };
         InvoiceSummaryDto: {
             /**
              * @description Amount without tax
              * @example 1500
              */
-            amountWithoutTax: number;
+            amountWithoutTax: number | null;
             /**
              * @description Amount with tax
              * @example 1590
              */
-            amountWithTax: number;
+            amountWithTax: number | null;
             /**
              * @description Amount without tax and discount
              * @example 1500
@@ -1126,7 +1126,7 @@ export type components = {
              * @description Tax amount
              * @example 90
              */
-            taxAmount: number;
+            taxAmount: number | null;
             /**
              * @description Global discount type
              * @example null
@@ -1147,12 +1147,12 @@ export type components = {
              * @description Total
              * @example 1590
              */
-            total: number;
+            total: number | null;
             /**
              * @description Total payable
              * @example 1590
              */
-            totalToPay: number;
+            totalToPay: number | null;
             /**
              * @description Withholding tax amount
              * @example null
@@ -1169,22 +1169,22 @@ export type components = {
              * @description Item quantity
              * @example 1
              */
-            quantity: number;
+            quantity: number | null;
             /**
              * @description Amount without tax
              * @example 1500
              */
-            amountWithoutTax: number;
+            amountWithoutTax: number | null;
             /**
              * @description Amount with tax
              * @example 1590
              */
-            amountWithTax: number;
+            amountWithTax: number | null;
             /**
              * @description Tax amount
              * @example 90
              */
-            taxAmount: number;
+            taxAmount: number | null;
             /**
              * @description Discount amount applied to the item
              * @example 0
@@ -1194,12 +1194,12 @@ export type components = {
              * @description Unit amount without tax
              * @example 1500
              */
-            unitAmountWithoutTax: number;
+            unitAmountWithoutTax: number | null;
             /**
              * @description Unit amount with tax
              * @example 1590
              */
-            unitAmountWithTax: number;
+            unitAmountWithTax: number | null;
             /**
              * @description Withholding tax amount
              * @example null
@@ -1209,19 +1209,19 @@ export type components = {
              * @description Withholding tax enabled
              * @example false
              */
-            withholdingTaxEnabled: boolean;
+            withholdingTaxEnabled: boolean | null;
         };
         ItemDataDto: {
             /**
              * @description Item name
              * @example TV LG
              */
-            name: string;
+            name: string | null;
             /**
              * @description Item description
              * @example
              */
-            description: string;
+            description: string | null;
             /**
              * @description Item type
              * @example SERVICE
@@ -1231,22 +1231,22 @@ export type components = {
              * @description Unit price
              * @example 1500
              */
-            unitPrice: number;
+            unitPrice: number | null;
             /**
              * @description Tax rate
              * @example 6
              */
-            taxRate: number;
+            taxRate: number | null;
             /**
              * @description VAT rate
              * @example REDUCED
              */
-            vatRate: string;
+            vatRate: string | null;
             /**
              * @description VAT territory
              * @example CONTINENTAL
              */
-            vatTerritory: string;
+            vatTerritory: string | null;
             /**
              * @description VAT exemption reason
              * @example null
@@ -1256,7 +1256,7 @@ export type components = {
              * @description Automatic VAT enabled
              * @example false
              */
-            isAutoVATEnabled: boolean;
+            isAutoVATEnabled: boolean | null;
         };
         InvoiceItemResponseDto: {
             /**
@@ -1268,11 +1268,11 @@ export type components = {
              * @description Item reference
              * @example 68483e978073231c3947077c
              */
-            ref: string;
+            ref: string | null;
             /** @description Item metadata */
-            meta: components["schemas"]["ItemMetaDto"];
+            meta: components["schemas"]["ItemMetaDto"] | (never | null);
             /** @description Item data */
-            data: components["schemas"]["ItemDataDto"];
+            data: components["schemas"]["ItemDataDto"] | (never | null);
             /**
              * @description Only on the lines of partial credit/debit notes: what the line changes on the corrected invoice line — the quantity (QUANTITY) or the unit price (PRICE). Absent on other lines and on older notes.
              * @example QUANTITY
@@ -1302,9 +1302,9 @@ export type components = {
             /**
              * @description Schedule status. SCHEDULED issues on the next occurrence; PAUSED is on hold; COMPLETED reached endDate; FAILED stopped on an error (see failReason) and resumes with status=SCHEDULED.
              * @example SCHEDULED
-             * @enum {string}
+             * @enum {string|null}
              */
-            status: "COMPLETED" | "FAILED" | "PAUSED" | "SCHEDULED" | "STOPPED";
+            status: "COMPLETED" | "FAILED" | "PAUSED" | "SCHEDULED" | "STOPPED" | null;
             /**
              * @description Frequency. CUSTOM only appears on schedules created in the web app; the API does not accept it on create.
              * @example MONTHLY
@@ -1325,14 +1325,14 @@ export type components = {
              * @description Weekdays (0 = Monday … 6 = Sunday)
              * @example []
              */
-            byDay: number[];
+            byDay: number[] | null;
             /**
              * @description Days of the month (1–31)
              * @example [
              *       1
              *     ]
              */
-            byMonthDay: number[];
+            byMonthDay: number[] | null;
             /**
              * @description Issuing time (HH:mm, account's timezone)
              * @example 09:00
@@ -1383,12 +1383,12 @@ export type components = {
              * @description Internal template reference (SCHED-0001, …). Not a fiscal number — each issued document gets its own number in the series.
              * @example SCHED-0001
              */
-            number: string;
+            number: string | null;
             /**
              * @description Document type to issue
              * @example INVOICE
              */
-            documentType: string;
+            documentType: string | null;
             /**
              * @description Template status — always SCHEDULED; the schedule status is in schedule.status
              * @example SCHEDULED
@@ -1403,27 +1403,27 @@ export type components = {
              * @description CAE code
              * @example 1234
              */
-            cae: string;
+            cae: string | null;
             /** @description Series the documents are issued in */
             series: components["schemas"]["SeriesDto"] | (never | null);
             /** @description Customer */
-            customer: components["schemas"]["CustomerDto"];
+            customer: components["schemas"]["CustomerDto"] | (never | null);
             /** @description Totals of each document to issue */
-            summary: components["schemas"]["InvoiceSummaryDto"];
+            summary: components["schemas"]["InvoiceSummaryDto"] | (never | null);
             /** @description Items */
-            items: components["schemas"]["InvoiceItemResponseDto"][];
+            items: components["schemas"]["InvoiceItemResponseDto"][] | null;
             /** @description Schedule */
-            schedule: components["schemas"]["InvoiceScheduleResponseDto"];
+            schedule: components["schemas"]["InvoiceScheduleResponseDto"] | (never | null);
             /**
              * @description Creation date
              * @example 2026-09-05T11:57:59.008Z
              */
-            createdAt: string;
+            createdAt: string | null;
             /**
              * @description Last change date
              * @example 2026-09-05T11:57:59.008Z
              */
-            updatedAt: string;
+            updatedAt: string | null;
         };
         UpdateScheduledInvoiceDto: {
             /**
@@ -1496,7 +1496,7 @@ export type components = {
              * @description Invoice creation date
              * @example 2025-10-28T11:57:59.008Z
              */
-            createdAt: string;
+            createdAt: string | null;
         };
         InvoicePaymentInputDto: {
             /**
@@ -1587,12 +1587,12 @@ export type components = {
              * @description Payment method
              * @example bankTransfer
              */
-            method: string;
+            method: string | null;
             /**
              * @description Payment date
              * @example 2025-11-04T07:00:00.000Z
              */
-            date: string;
+            date: string | null;
         };
         CreateInvoiceResponseDto: {
             /**
@@ -1619,7 +1619,7 @@ export type components = {
              * @description Document type
              * @example INVOICE
              */
-            documentType: string;
+            documentType: string | null;
             /**
              * @description Invoice status
              * @example ISSUED
@@ -1630,31 +1630,31 @@ export type components = {
              * @description Draft revision (updatedAt). Send it as expectedUpdatedAt when issuing: a draft changed in the meantime is refused.
              * @example 2025-10-28T11:58:01.936Z
              */
-            updatedAt: string;
+            updatedAt: string | null;
             /**
              * @description Invoice notes
              * @example null
              */
             notes: string | null;
             /** @description Invoice series */
-            series: components["schemas"]["SeriesDto"];
+            series: components["schemas"]["SeriesDto"] | (never | null);
             /**
              * @description Payment
              * @example null
              */
             payment: components["schemas"]["LegacyPaymentDto"] | (never | null);
             /** @description Customer */
-            customer: components["schemas"]["CustomerDto"];
+            customer: components["schemas"]["CustomerDto"] | (never | null);
             /**
              * @description Invoice due date
              * @example 2025-11-04T07:00:00.000Z
              */
-            dueDate: string;
+            dueDate: string | null;
             /**
              * @description Invoice issue date
              * @example 2025-10-28T11:57:59.008Z
              */
-            date: string;
+            date: string | null;
             /**
              * Format: date-time
              * @description Date of supply, when recorded (art. 36.º n.º 5 al. f) CIVA). Comes back null when it was not recorded — the issue date applies in that case.
@@ -1662,7 +1662,7 @@ export type components = {
              */
             taxPointDate: string | null;
             /** @description Invoice items */
-            items: components["schemas"]["InvoiceItemResponseDto"][];
+            items: components["schemas"]["InvoiceItemResponseDto"][] | null;
         };
         CreditNoteItemDto: {
             /**
@@ -1740,7 +1740,7 @@ export type components = {
              * @description Document type
              * @example CREDIT_NOTE
              */
-            documentType: string;
+            documentType: string | null;
             /**
              * @description Document status
              * @example ISSUED
@@ -1749,14 +1749,14 @@ export type components = {
             /**
              * @description Credit note reason
              * @example OPERATION_CANCELLATION
-             * @enum {string}
+             * @enum {string|null}
              */
-            creditNoteReasonCode: "ACCOUNTING_SYNC_ERROR" | "ADVANCE_REFUND" | "BAD_DEBT_UNDER_750" | "CORPORATE_REORGANIZATION" | "DEATH_NO_ASSETS" | "DEDUCTION_RIGHT_ALTERATION" | "DEDUCTION_RIGHT_CHANGE" | "DISCOUNT_BONUS" | "FINAL_CREDIT_REDUCTION" | "FIXED_ASSET_REGULARIZATION" | "INCORRECT_VAT_RATE" | "INSOLVENCY_CLOSED" | "INVOICE_EMISSION_ERROR" | "LEGAL_PROVISION_CHANGE" | "MERGER_INCORPORATION" | "OPERATION_CANCELLATION" | "OTHER_LEGAL_REGULARIZATIONS" | "PROPERTY_OUT_OF_BUSINESS" | "PRORATA_ADJUSTMENT" | "RATEIO_FINAL_NO_PAYMENT" | "REAL_AFFECTATION_CHANGE" | "RETURN_GOODS_SERVICES" | "SPLIT_PATRIMONY_TRANSFER" | "TAX_RATE_CHANGE" | "TECHNICAL_CORRECTION" | "VAT_REGIME_CHANGE" | "VAT_REGIME_CHANGE_ART25" | "WRONG_INVOICE";
+            creditNoteReasonCode: "ACCOUNTING_SYNC_ERROR" | "ADVANCE_REFUND" | "BAD_DEBT_UNDER_750" | "CORPORATE_REORGANIZATION" | "DEATH_NO_ASSETS" | "DEDUCTION_RIGHT_ALTERATION" | "DEDUCTION_RIGHT_CHANGE" | "DISCOUNT_BONUS" | "FINAL_CREDIT_REDUCTION" | "FIXED_ASSET_REGULARIZATION" | "INCORRECT_VAT_RATE" | "INSOLVENCY_CLOSED" | "INVOICE_EMISSION_ERROR" | "LEGAL_PROVISION_CHANGE" | "MERGER_INCORPORATION" | "OPERATION_CANCELLATION" | "OTHER_LEGAL_REGULARIZATIONS" | "PROPERTY_OUT_OF_BUSINESS" | "PRORATA_ADJUSTMENT" | "RATEIO_FINAL_NO_PAYMENT" | "REAL_AFFECTATION_CHANGE" | "RETURN_GOODS_SERVICES" | "SPLIT_PATRIMONY_TRANSFER" | "TAX_RATE_CHANGE" | "TECHNICAL_CORRECTION" | "VAT_REGIME_CHANGE" | "VAT_REGIME_CHANGE_ART25" | "WRONG_INVOICE" | null;
             /**
              * @description Identifier of the reversed invoice
              * @example 6900afc7e9a04d2adc897c68
              */
-            parentInvoiceId: string;
+            parentInvoiceId: string | null;
             /**
              * @description Number of the reversed invoice
              * @example FR FIZ2026/336
@@ -1769,11 +1769,11 @@ export type components = {
              */
             taxPointDate: string | null;
             /** @description Customer */
-            customer: components["schemas"]["CustomerDto"];
+            customer: components["schemas"]["CustomerDto"] | (never | null);
             /** @description Credit note items */
-            items: components["schemas"]["InvoiceItemResponseDto"][];
+            items: components["schemas"]["InvoiceItemResponseDto"][] | null;
             /** @description Document summary */
-            summary: components["schemas"]["InvoiceSummaryDto"];
+            summary: components["schemas"]["InvoiceSummaryDto"] | (never | null);
         };
         UpdateInvoiceDto: {
             /**
@@ -1850,7 +1850,7 @@ export type components = {
              * @description AT synchronization status
              * @example FAILED
              */
-            status: string;
+            status: string | null;
             /**
              * @description AT code
              * @example null
@@ -1860,7 +1860,7 @@ export type components = {
              * @description AT message
              * @example AT sync failed without error details
              */
-            atMessage: string;
+            atMessage: string | null;
             /**
              * @description System error
              * @example null
@@ -1870,12 +1870,12 @@ export type components = {
              * @description Can be retried
              * @example false
              */
-            isRetriable: boolean;
+            isRetriable: boolean | null;
             /**
              * @description Last update date
              * @example 2025-10-28T11:58:01.936Z
              */
-            updatedAt: string;
+            updatedAt: string | null;
         };
         IssueInvoiceResponseDto: {
             /**
@@ -1887,22 +1887,22 @@ export type components = {
              * @description Document number
              * @example FT 2025/001
              */
-            number: string;
+            number: string | null;
             /**
              * @description Unique document code (ATCUD)
              * @example JFDSK3D4-1
              */
-            atcud: string;
+            atcud: string | null;
             /**
              * @description Document hash summary (4 characters) printed on the PDF
              * @example AB3F
              */
-            shortHash: string;
+            shortHash: string | null;
             /**
              * @description Document type
              * @example INVOICE
              */
-            documentType: string;
+            documentType: string | null;
             /**
              * @description Invoice status
              * @example ISSUED
@@ -1914,24 +1914,24 @@ export type components = {
              */
             notes: string | null;
             /** @description Invoice series */
-            series: components["schemas"]["SeriesDto"];
+            series: components["schemas"]["SeriesDto"] | (never | null);
             /**
              * @description Payment
              * @example null
              */
             payment: components["schemas"]["LegacyPaymentDto"] | (never | null);
             /** @description Customer */
-            customer: components["schemas"]["CustomerDto"];
+            customer: components["schemas"]["CustomerDto"] | (never | null);
             /**
              * @description Invoice due date
              * @example 2025-11-04T07:00:00.000Z
              */
-            dueDate: string;
+            dueDate: string | null;
             /**
              * @description Invoice issue date
              * @example 2025-10-28T11:57:59.008Z
              */
-            date: string;
+            date: string | null;
             /**
              * Format: date-time
              * @description Date of supply, when recorded (art. 36.º n.º 5 al. f) CIVA). Comes back null when it was not recorded — the issue date applies in that case.
@@ -1939,9 +1939,9 @@ export type components = {
              */
             taxPointDate: string | null;
             /** @description Invoice items */
-            items: components["schemas"]["InvoiceItemResponseDto"][];
+            items: components["schemas"]["InvoiceItemResponseDto"][] | null;
             /** @description AT synchronization status */
-            syncWithAt: components["schemas"]["SyncWithAtDto"];
+            syncWithAt: components["schemas"]["SyncWithAtDto"] | (never | null);
         };
         PayInvoiceDto: {
             /**
@@ -1966,17 +1966,17 @@ export type components = {
              * @description Payment method
              * @example bankTransfer
              */
-            method: string;
+            method: string | null;
             /**
              * @description Payment date
              * @example 2025-11-04T07:00:00.000Z
              */
-            date: string;
+            date: string | null;
             /**
              * @description Amount paid
              * @example 123.45
              */
-            amount: number;
+            amount: number | null;
         };
         PayInvoiceReceiptDto: {
             /**
@@ -1998,7 +1998,7 @@ export type components = {
              * @description Document type
              * @example RECEIPT
              */
-            documentType: string;
+            documentType: string | null;
             /**
              * @description Receipt status
              * @example ISSUED
@@ -2008,21 +2008,21 @@ export type components = {
              * @description Receipt issue date
              * @example 2025-11-04T07:00:00.000Z
              */
-            date: string;
+            date: string | null;
             /** @description Receipt series */
-            series: components["schemas"]["SeriesDto"];
+            series: components["schemas"]["SeriesDto"] | (never | null);
         };
         PayInvoiceItemMetaDto: {
             /**
              * @description Quantity
              * @example 1
              */
-            quantity: number;
+            quantity: number | null;
             /**
              * @description Tax amount
              * @example 23
              */
-            taxAmount: number;
+            taxAmount: number | null;
         };
         PayInvoiceItemDto: {
             /**
@@ -2034,11 +2034,11 @@ export type components = {
              * @description Item reference
              * @example 68483e978073231c3947077c
              */
-            ref: string;
+            ref: string | null;
             /** @description Item metadata */
-            meta: components["schemas"]["PayInvoiceItemMetaDto"];
+            meta: components["schemas"]["PayInvoiceItemMetaDto"] | (never | null);
             /** @description Item data */
-            data: components["schemas"]["ItemDataDto"];
+            data: components["schemas"]["ItemDataDto"] | (never | null);
         };
         PayInvoiceResponseDto: {
             /**
@@ -2050,12 +2050,12 @@ export type components = {
              * @description Invoice number
              * @example FT 2025/001
              */
-            number: string;
+            number: string | null;
             /**
              * @description Document type
              * @example INVOICE
              */
-            documentType: string;
+            documentType: string | null;
             /**
              * @description Invoice status
              * @example PAID
@@ -2067,25 +2067,25 @@ export type components = {
              */
             notes: string | null;
             /** @description Invoice series */
-            series: components["schemas"]["SeriesDto"];
+            series: components["schemas"]["SeriesDto"] | (never | null);
             /** @description Legacy field, populated only once the invoice is fully paid. On a partial payment it is null — use `payments`. */
             payment: components["schemas"]["LegacyPaymentDto"] | (never | null);
             /** @description Every payment registered against the invoice, including each amount. */
-            payments: components["schemas"]["PaymentDto"][];
+            payments: components["schemas"]["PaymentDto"][] | null;
             /** @description Receipt (RG) issued by this payment, carrying the id needed to download its PDF from GET /invoices/{id}/pdf. On a partial payment this is the receipt for this payment, not an earlier one. Null for AT-imported invoices, for which no receipt is issued. */
             receipt: components["schemas"]["PayInvoiceReceiptDto"] | (never | null);
             /** @description Customer */
-            customer: components["schemas"]["CustomerDto"];
+            customer: components["schemas"]["CustomerDto"] | (never | null);
             /**
              * @description Invoice due date
              * @example 2025-11-04T07:00:00.000Z
              */
-            dueDate: string;
+            dueDate: string | null;
             /**
              * @description Invoice issue date
              * @example 2025-10-28T11:57:59.008Z
              */
-            date: string;
+            date: string | null;
             /**
              * Format: date-time
              * @description Date of supply, when recorded (art. 36.º n.º 5 al. f) CIVA). Comes back null when it was not recorded — the issue date applies in that case.
@@ -2093,9 +2093,9 @@ export type components = {
              */
             taxPointDate: string | null;
             /** @description Invoice items */
-            items: components["schemas"]["PayInvoiceItemDto"][];
+            items: components["schemas"]["PayInvoiceItemDto"][] | null;
             /** @description AT synchronization status */
-            syncWithAt: components["schemas"]["SyncWithAtDto"];
+            syncWithAt: components["schemas"]["SyncWithAtDto"] | (never | null);
         };
         CancelInvoiceDto: {
             /**
@@ -2114,12 +2114,12 @@ export type components = {
              * @description Document number
              * @example FR FIZ2026/336
              */
-            number: string;
+            number: string | null;
             /**
              * @description Document type
              * @example INVOICE_RECEIPT
              */
-            documentType: string;
+            documentType: string | null;
             /**
              * @description Invoice status
              * @example CANCELED
@@ -2424,7 +2424,7 @@ export type components = {
              * @description Document type
              * @example INVOICE
              */
-            documentType: string;
+            documentType: string | null;
             /**
              * @description Invoice status
              * @example ISSUED
@@ -2434,7 +2434,7 @@ export type components = {
              * @description Invoice date
              * @example 2025-10-28T11:57:59.008Z
              */
-            date: string;
+            date: string | null;
         };
         ProposalResponseDto: {
             /**
@@ -2450,9 +2450,9 @@ export type components = {
             /**
              * @description Document type
              * @example PROFORMA
-             * @enum {string}
+             * @enum {string|null}
              */
-            documentType: "PROFORMA";
+            documentType: "PROFORMA" | null;
             /**
              * @description Status: CREATED (active), ISSUED (converted into an invoice), CANCELED (void)
              * @example CREATED
@@ -2463,17 +2463,17 @@ export type components = {
              * @description Document date
              * @example 2025-10-28T11:57:59.008Z
              */
-            date: string;
+            date: string | null;
             /**
              * @description Validity / due date
              * @example 2025-11-04T07:00:00.000Z
              */
-            dueDate: string;
+            dueDate: string | null;
             /**
              * @description Currency
              * @example EUR
              */
-            currency: string;
+            currency: string | null;
             /**
              * @description Notes
              * @example Proposta válida por 30 dias
@@ -2487,18 +2487,18 @@ export type components = {
             /** @description Series */
             series: components["schemas"]["SeriesDto"] | (never | null);
             /** @description Customer */
-            customer: components["schemas"]["CustomerDto"];
+            customer: components["schemas"]["CustomerDto"] | (never | null);
             /** @description Totals */
-            summary: components["schemas"]["InvoiceSummaryDto"];
+            summary: components["schemas"]["InvoiceSummaryDto"] | (never | null);
             /** @description Items */
-            items: components["schemas"]["InvoiceItemResponseDto"][];
+            items: components["schemas"]["InvoiceItemResponseDto"][] | null;
             /** @description Invoices raised from this pro forma */
-            relatedDocuments: components["schemas"]["RelatedDocumentDto"][];
+            relatedDocuments: components["schemas"]["RelatedDocumentDto"][] | null;
             /**
              * @description Creation date
              * @example 2025-10-28T11:57:59.008Z
              */
-            createdAt: string;
+            createdAt: string | null;
             /**
              * @description Cancellation date, when canceled
              * @example 2025-11-02T09:00:00.000Z
@@ -2713,7 +2713,7 @@ export type components = {
              * @description Whether the customer is archived. An archived customer is left out of the default listing and can be restored with POST /customers/{id}/restore.
              * @example false
              */
-            isArchived: boolean;
+            isArchived: boolean | null;
         };
         UpdateCustomerDto: {
             /**
@@ -3530,7 +3530,7 @@ export type components = {
              * @description Document type the series entry applies to
              * @example INVOICE
              */
-            documentType: string;
+            documentType: string | null;
             /**
              * @description Series validation code (ATCUD) assigned by the AT
              * @example AAJF

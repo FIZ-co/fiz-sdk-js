@@ -9532,12 +9532,14 @@
           "ref": {
             "type": "string",
             "description": "Series identifier",
-            "example": "68483ba7a19e44171e3d080a"
+            "example": "68483ba7a19e44171e3d080a",
+            "nullable": true
           },
           "name": {
             "type": "string",
             "description": "Series name",
-            "example": "FIZ20255de3d61a"
+            "example": "FIZ20255de3d61a",
+            "nullable": true
           }
         },
         "required": [
@@ -9551,27 +9553,32 @@
           "taxpayerNumber": {
             "type": "string",
             "description": "Tax number (NIF)",
-            "example": "303741791"
+            "example": "303741791",
+            "nullable": true
           },
           "name": {
             "type": "string",
             "description": "Customer name",
-            "example": "Petr Kutis"
+            "example": "Petr Kutis",
+            "nullable": true
           },
           "email": {
             "type": "string",
             "description": "Customer email",
-            "example": "test@test.com"
+            "example": "test@test.com",
+            "nullable": true
           },
           "country": {
             "type": "string",
             "description": "Customer country",
-            "example": "PT"
+            "example": "PT",
+            "nullable": true
           },
           "phone": {
             "type": "string",
             "description": "Customer phone",
-            "example": ""
+            "example": "",
+            "nullable": true
           }
         },
         "required": [
@@ -9588,13 +9595,21 @@
           "ref": {
             "type": "string",
             "description": "Customer identifier",
-            "example": "6863b1513117c5892ff55296"
+            "example": "6863b1513117c5892ff55296",
+            "nullable": true
           },
           "data": {
             "description": "Customer data",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/CustomerDataDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           }
@@ -9610,12 +9625,14 @@
           "amountWithoutTax": {
             "type": "number",
             "description": "Amount without tax",
-            "example": 1500
+            "example": 1500,
+            "nullable": true
           },
           "amountWithTax": {
             "type": "number",
             "description": "Amount with tax",
-            "example": 1590
+            "example": 1590,
+            "nullable": true
           },
           "amountWithoutTaxWithoutDiscount": {
             "type": "number",
@@ -9626,7 +9643,8 @@
           "taxAmount": {
             "type": "number",
             "description": "Tax amount",
-            "example": 90
+            "example": 90,
+            "nullable": true
           },
           "globalDiscountType": {
             "type": "string",
@@ -9654,12 +9672,14 @@
           "total": {
             "type": "number",
             "description": "Total",
-            "example": 1590
+            "example": 1590,
+            "nullable": true
           },
           "totalToPay": {
             "type": "number",
             "description": "Total payable",
-            "example": 1590
+            "example": 1590,
+            "nullable": true
           },
           "withholdingTaxAmount": {
             "type": "number",
@@ -9694,22 +9714,26 @@
           "quantity": {
             "type": "number",
             "description": "Item quantity",
-            "example": 1
+            "example": 1,
+            "nullable": true
           },
           "amountWithoutTax": {
             "type": "number",
             "description": "Amount without tax",
-            "example": 1500
+            "example": 1500,
+            "nullable": true
           },
           "amountWithTax": {
             "type": "number",
             "description": "Amount with tax",
-            "example": 1590
+            "example": 1590,
+            "nullable": true
           },
           "taxAmount": {
             "type": "number",
             "description": "Tax amount",
-            "example": 90
+            "example": 90,
+            "nullable": true
           },
           "discountAmount": {
             "type": "number",
@@ -9720,12 +9744,14 @@
           "unitAmountWithoutTax": {
             "type": "number",
             "description": "Unit amount without tax",
-            "example": 1500
+            "example": 1500,
+            "nullable": true
           },
           "unitAmountWithTax": {
             "type": "number",
             "description": "Unit amount with tax",
-            "example": 1590
+            "example": 1590,
+            "nullable": true
           },
           "withholdingTaxAmount": {
             "type": "number",
@@ -9736,7 +9762,8 @@
           "withholdingTaxEnabled": {
             "type": "boolean",
             "description": "Withholding tax enabled",
-            "example": false
+            "example": false,
+            "nullable": true
           }
         },
         "required": [
@@ -9757,12 +9784,14 @@
           "name": {
             "type": "string",
             "description": "Item name",
-            "example": "TV LG"
+            "example": "TV LG",
+            "nullable": true
           },
           "description": {
             "type": "string",
             "description": "Item description",
-            "example": ""
+            "example": "",
+            "nullable": true
           },
           "type": {
             "type": "string",
@@ -9772,22 +9801,26 @@
           "unitPrice": {
             "type": "number",
             "description": "Unit price",
-            "example": 1500
+            "example": 1500,
+            "nullable": true
           },
           "taxRate": {
             "type": "number",
             "description": "Tax rate",
-            "example": 6
+            "example": 6,
+            "nullable": true
           },
           "vatRate": {
             "type": "string",
             "description": "VAT rate",
-            "example": "REDUCED"
+            "example": "REDUCED",
+            "nullable": true
           },
           "vatTerritory": {
             "type": "string",
             "description": "VAT territory",
-            "example": "CONTINENTAL"
+            "example": "CONTINENTAL",
+            "nullable": true
           },
           "vatExemptionReason": {
             "type": "string",
@@ -9798,7 +9831,8 @@
           "isAutoVATEnabled": {
             "type": "boolean",
             "description": "Automatic VAT enabled",
-            "example": false
+            "example": false,
+            "nullable": true
           }
         },
         "required": [
@@ -9824,21 +9858,36 @@
           "ref": {
             "type": "string",
             "description": "Item reference",
-            "example": "68483e978073231c3947077c"
+            "example": "68483e978073231c3947077c",
+            "nullable": true
           },
           "meta": {
             "description": "Item metadata",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/ItemMetaDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "data": {
             "description": "Item data",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/ItemDataDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -9909,9 +9958,11 @@
               "FAILED",
               "PAUSED",
               "SCHEDULED",
-              "STOPPED"
+              "STOPPED",
+              null
             ],
-            "example": "SCHEDULED"
+            "example": "SCHEDULED",
+            "nullable": true
           },
           "frequency": {
             "type": "string",
@@ -9941,6 +9992,7 @@
           "byDay": {
             "description": "Weekdays (0 = Monday … 6 = Sunday)",
             "example": [],
+            "nullable": true,
             "type": "array",
             "items": {
               "type": "number"
@@ -9951,6 +10003,7 @@
             "example": [
               1
             ],
+            "nullable": true,
             "type": "array",
             "items": {
               "type": "number"
@@ -10042,12 +10095,14 @@
           "number": {
             "type": "string",
             "description": "Internal template reference (SCHED-0001, …). Not a fiscal number — each issued document gets its own number in the series.",
-            "example": "SCHED-0001"
+            "example": "SCHED-0001",
+            "nullable": true
           },
           "documentType": {
             "type": "string",
             "description": "Document type to issue",
-            "example": "INVOICE"
+            "example": "INVOICE",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -10063,7 +10118,8 @@
           "cae": {
             "type": "string",
             "description": "CAE code",
-            "example": "1234"
+            "example": "1234",
+            "nullable": true
           },
           "series": {
             "description": "Series the documents are issued in",
@@ -10082,22 +10138,37 @@
           },
           "customer": {
             "description": "Customer",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/CustomerDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "summary": {
             "description": "Totals of each document to issue",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/InvoiceSummaryDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "items": {
             "description": "Items",
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/InvoiceItemResponseDto"
@@ -10105,21 +10176,30 @@
           },
           "schedule": {
             "description": "Schedule",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/InvoiceScheduleResponseDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "createdAt": {
             "type": "string",
             "description": "Creation date",
-            "example": "2026-09-05T11:57:59.008Z"
+            "example": "2026-09-05T11:57:59.008Z",
+            "nullable": true
           },
           "updatedAt": {
             "type": "string",
             "description": "Last change date",
-            "example": "2026-09-05T11:57:59.008Z"
+            "example": "2026-09-05T11:57:59.008Z",
+            "nullable": true
           }
         },
         "required": [
@@ -10237,7 +10317,8 @@
           "createdAt": {
             "type": "string",
             "description": "Invoice creation date",
-            "example": "2025-10-28T11:57:59.008Z"
+            "example": "2025-10-28T11:57:59.008Z",
+            "nullable": true
           }
         },
         "required": [
@@ -10377,12 +10458,14 @@
           "method": {
             "type": "string",
             "description": "Payment method",
-            "example": "bankTransfer"
+            "example": "bankTransfer",
+            "nullable": true
           },
           "date": {
             "type": "string",
             "description": "Payment date",
-            "example": "2025-11-04T07:00:00.000Z"
+            "example": "2025-11-04T07:00:00.000Z",
+            "nullable": true
           }
         },
         "required": [
@@ -10419,7 +10502,8 @@
           "documentType": {
             "type": "string",
             "description": "Document type",
-            "example": "INVOICE"
+            "example": "INVOICE",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -10430,7 +10514,8 @@
             "type": "string",
             "description": "Draft revision (updatedAt). Send it as expectedUpdatedAt when issuing: a draft changed in the meantime is refused.",
             "format": "date-time",
-            "example": "2025-10-28T11:58:01.936Z"
+            "example": "2025-10-28T11:58:01.936Z",
+            "nullable": true
           },
           "notes": {
             "type": "string",
@@ -10440,9 +10525,16 @@
           },
           "series": {
             "description": "Invoice series",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SeriesDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -10464,21 +10556,30 @@
           },
           "customer": {
             "description": "Customer",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/CustomerDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "dueDate": {
             "type": "string",
             "description": "Invoice due date",
-            "example": "2025-11-04T07:00:00.000Z"
+            "example": "2025-11-04T07:00:00.000Z",
+            "nullable": true
           },
           "date": {
             "type": "string",
             "description": "Invoice issue date",
-            "example": "2025-10-28T11:57:59.008Z"
+            "example": "2025-10-28T11:57:59.008Z",
+            "nullable": true
           },
           "taxPointDate": {
             "type": "string",
@@ -10489,6 +10590,7 @@
           },
           "items": {
             "description": "Invoice items",
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/InvoiceItemResponseDto"
@@ -10637,7 +10739,8 @@
           "documentType": {
             "type": "string",
             "description": "Document type",
-            "example": "CREDIT_NOTE"
+            "example": "CREDIT_NOTE",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -10675,14 +10778,17 @@
               "TECHNICAL_CORRECTION",
               "VAT_REGIME_CHANGE",
               "VAT_REGIME_CHANGE_ART25",
-              "WRONG_INVOICE"
+              "WRONG_INVOICE",
+              null
             ],
-            "example": "OPERATION_CANCELLATION"
+            "example": "OPERATION_CANCELLATION",
+            "nullable": true
           },
           "parentInvoiceId": {
             "type": "string",
             "description": "Identifier of the reversed invoice",
-            "example": "6900afc7e9a04d2adc897c68"
+            "example": "6900afc7e9a04d2adc897c68",
+            "nullable": true
           },
           "parentInvoiceNumber": {
             "type": "string",
@@ -10699,14 +10805,22 @@
           },
           "customer": {
             "description": "Customer",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/CustomerDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "items": {
             "description": "Credit note items",
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/InvoiceItemResponseDto"
@@ -10714,9 +10828,16 @@
           },
           "summary": {
             "description": "Document summary",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/InvoiceSummaryDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           }
@@ -10830,7 +10951,8 @@
           "status": {
             "type": "string",
             "description": "AT synchronization status",
-            "example": "FAILED"
+            "example": "FAILED",
+            "nullable": true
           },
           "atCode": {
             "type": "string",
@@ -10841,7 +10963,8 @@
           "atMessage": {
             "type": "string",
             "description": "AT message",
-            "example": "AT sync failed without error details"
+            "example": "AT sync failed without error details",
+            "nullable": true
           },
           "systemError": {
             "type": "string",
@@ -10852,12 +10975,14 @@
           "isRetriable": {
             "type": "boolean",
             "description": "Can be retried",
-            "example": false
+            "example": false,
+            "nullable": true
           },
           "updatedAt": {
             "type": "string",
             "description": "Last update date",
-            "example": "2025-10-28T11:58:01.936Z"
+            "example": "2025-10-28T11:58:01.936Z",
+            "nullable": true
           }
         },
         "required": [
@@ -10880,22 +11005,26 @@
           "number": {
             "type": "string",
             "description": "Document number",
-            "example": "FT 2025/001"
+            "example": "FT 2025/001",
+            "nullable": true
           },
           "atcud": {
             "type": "string",
             "description": "Unique document code (ATCUD)",
-            "example": "JFDSK3D4-1"
+            "example": "JFDSK3D4-1",
+            "nullable": true
           },
           "shortHash": {
             "type": "string",
             "description": "Document hash summary (4 characters) printed on the PDF",
-            "example": "AB3F"
+            "example": "AB3F",
+            "nullable": true
           },
           "documentType": {
             "type": "string",
             "description": "Document type",
-            "example": "INVOICE"
+            "example": "INVOICE",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -10910,9 +11039,16 @@
           },
           "series": {
             "description": "Invoice series",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SeriesDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -10934,21 +11070,30 @@
           },
           "customer": {
             "description": "Customer",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/CustomerDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "dueDate": {
             "type": "string",
             "description": "Invoice due date",
-            "example": "2025-11-04T07:00:00.000Z"
+            "example": "2025-11-04T07:00:00.000Z",
+            "nullable": true
           },
           "date": {
             "type": "string",
             "description": "Invoice issue date",
-            "example": "2025-10-28T11:57:59.008Z"
+            "example": "2025-10-28T11:57:59.008Z",
+            "nullable": true
           },
           "taxPointDate": {
             "type": "string",
@@ -10959,6 +11104,7 @@
           },
           "items": {
             "description": "Invoice items",
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/InvoiceItemResponseDto"
@@ -10966,9 +11112,16 @@
           },
           "syncWithAt": {
             "description": "AT synchronization status",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SyncWithAtDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           }
@@ -11032,17 +11185,20 @@
           "method": {
             "type": "string",
             "description": "Payment method",
-            "example": "bankTransfer"
+            "example": "bankTransfer",
+            "nullable": true
           },
           "date": {
             "type": "string",
             "description": "Payment date",
-            "example": "2025-11-04T07:00:00.000Z"
+            "example": "2025-11-04T07:00:00.000Z",
+            "nullable": true
           },
           "amount": {
             "type": "number",
             "description": "Amount paid",
-            "example": 123.45
+            "example": 123.45,
+            "nullable": true
           }
         },
         "required": [
@@ -11074,7 +11230,8 @@
           "documentType": {
             "type": "string",
             "description": "Document type",
-            "example": "RECEIPT"
+            "example": "RECEIPT",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -11084,13 +11241,21 @@
           "date": {
             "type": "string",
             "description": "Receipt issue date",
-            "example": "2025-11-04T07:00:00.000Z"
+            "example": "2025-11-04T07:00:00.000Z",
+            "nullable": true
           },
           "series": {
             "description": "Receipt series",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SeriesDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           }
@@ -11111,12 +11276,14 @@
           "quantity": {
             "type": "number",
             "description": "Quantity",
-            "example": 1
+            "example": 1,
+            "nullable": true
           },
           "taxAmount": {
             "type": "number",
             "description": "Tax amount",
-            "example": 23
+            "example": 23,
+            "nullable": true
           }
         },
         "required": [
@@ -11135,21 +11302,36 @@
           "ref": {
             "type": "string",
             "description": "Item reference",
-            "example": "68483e978073231c3947077c"
+            "example": "68483e978073231c3947077c",
+            "nullable": true
           },
           "meta": {
             "description": "Item metadata",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/PayInvoiceItemMetaDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "data": {
             "description": "Item data",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/ItemDataDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           }
@@ -11172,12 +11354,14 @@
           "number": {
             "type": "string",
             "description": "Invoice number",
-            "example": "FT 2025/001"
+            "example": "FT 2025/001",
+            "nullable": true
           },
           "documentType": {
             "type": "string",
             "description": "Document type",
-            "example": "INVOICE"
+            "example": "INVOICE",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -11192,9 +11376,16 @@
           },
           "series": {
             "description": "Invoice series",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SeriesDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
@@ -11215,6 +11406,7 @@
           },
           "payments": {
             "description": "Every payment registered against the invoice, including each amount.",
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentDto"
@@ -11237,21 +11429,30 @@
           },
           "customer": {
             "description": "Customer",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/CustomerDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "dueDate": {
             "type": "string",
             "description": "Invoice due date",
-            "example": "2025-11-04T07:00:00.000Z"
+            "example": "2025-11-04T07:00:00.000Z",
+            "nullable": true
           },
           "date": {
             "type": "string",
             "description": "Invoice issue date",
-            "example": "2025-10-28T11:57:59.008Z"
+            "example": "2025-10-28T11:57:59.008Z",
+            "nullable": true
           },
           "taxPointDate": {
             "type": "string",
@@ -11262,6 +11463,7 @@
           },
           "items": {
             "description": "Invoice items",
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PayInvoiceItemDto"
@@ -11269,9 +11471,16 @@
           },
           "syncWithAt": {
             "description": "AT synchronization status",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SyncWithAtDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           }
@@ -11315,12 +11524,14 @@
           "number": {
             "type": "string",
             "description": "Document number",
-            "example": "FR FIZ2026/336"
+            "example": "FR FIZ2026/336",
+            "nullable": true
           },
           "documentType": {
             "type": "string",
             "description": "Document type",
-            "example": "INVOICE_RECEIPT"
+            "example": "INVOICE_RECEIPT",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -11791,7 +12002,8 @@
           "documentType": {
             "type": "string",
             "description": "Document type",
-            "example": "INVOICE"
+            "example": "INVOICE",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -11801,7 +12013,8 @@
           "date": {
             "type": "string",
             "description": "Invoice date",
-            "example": "2025-10-28T11:57:59.008Z"
+            "example": "2025-10-28T11:57:59.008Z",
+            "nullable": true
           }
         },
         "required": [
@@ -11830,9 +12043,11 @@
             "type": "string",
             "description": "Document type",
             "enum": [
-              "PROFORMA"
+              "PROFORMA",
+              null
             ],
-            "example": "PROFORMA"
+            "example": "PROFORMA",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -11848,17 +12063,20 @@
           "date": {
             "type": "string",
             "description": "Document date",
-            "example": "2025-10-28T11:57:59.008Z"
+            "example": "2025-10-28T11:57:59.008Z",
+            "nullable": true
           },
           "dueDate": {
             "type": "string",
             "description": "Validity / due date",
-            "example": "2025-11-04T07:00:00.000Z"
+            "example": "2025-11-04T07:00:00.000Z",
+            "nullable": true
           },
           "currency": {
             "type": "string",
             "description": "Currency",
-            "example": "EUR"
+            "example": "EUR",
+            "nullable": true
           },
           "notes": {
             "type": "string",
@@ -11889,22 +12107,37 @@
           },
           "customer": {
             "description": "Customer",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/CustomerDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "summary": {
             "description": "Totals",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/InvoiceSummaryDto"
+              },
+              {
+                "type": "object",
+                "nullable": true,
+                "enum": [
+                  null
+                ]
               }
             ]
           },
           "items": {
             "description": "Items",
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/InvoiceItemResponseDto"
@@ -11912,6 +12145,7 @@
           },
           "relatedDocuments": {
             "description": "Invoices raised from this pro forma",
+            "nullable": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RelatedDocumentDto"
@@ -11920,7 +12154,8 @@
           "createdAt": {
             "type": "string",
             "description": "Creation date",
-            "example": "2025-10-28T11:57:59.008Z"
+            "example": "2025-10-28T11:57:59.008Z",
+            "nullable": true
           },
           "canceledAt": {
             "type": "string",
@@ -12202,7 +12437,8 @@
           "isArchived": {
             "type": "boolean",
             "description": "Whether the customer is archived. An archived customer is left out of the default listing and can be restored with POST /customers/{id}/restore.",
-            "example": false
+            "example": false,
+            "nullable": true
           }
         },
         "required": [
@@ -13507,7 +13743,8 @@
           "documentType": {
             "type": "string",
             "description": "Document type the series entry applies to",
-            "example": "INVOICE"
+            "example": "INVOICE",
+            "nullable": true
           },
           "validationCode": {
             "type": "string",
