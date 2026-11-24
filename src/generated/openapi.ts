@@ -1121,7 +1121,7 @@ export type components = {
              * @description Amount without tax and discount
              * @example 1500
              */
-            amountWithoutTaxWithoutDiscount: Record<string, never> | null;
+            amountWithoutTaxWithoutDiscount: number | null;
             /**
              * @description Tax amount
              * @example 90
@@ -1137,12 +1137,12 @@ export type components = {
              * @description Global discount percentage
              * @example null
              */
-            globalDiscountPercent: Record<string, never> | null;
+            globalDiscountPercent: number | null;
             /**
              * @description Global discount amount
              * @example null
              */
-            globalDiscountAmount: Record<string, never> | null;
+            globalDiscountAmount: number | null;
             /**
              * @description Total
              * @example 1590
@@ -1157,12 +1157,12 @@ export type components = {
              * @description Withholding tax amount
              * @example null
              */
-            withholdingTaxAmount: Record<string, never> | null;
+            withholdingTaxAmount: number | null;
             /**
              * @description Total of credit notes
              * @example null
              */
-            creditNotesTotal: Record<string, never> | null;
+            creditNotesTotal: number | null;
         };
         ItemMetaDto: {
             /**
@@ -1189,7 +1189,7 @@ export type components = {
              * @description Discount amount applied to the item
              * @example 0
              */
-            discountAmount: Record<string, never> | null;
+            discountAmount: number | null;
             /**
              * @description Unit amount without tax
              * @example 1500
@@ -1204,7 +1204,7 @@ export type components = {
              * @description Withholding tax amount
              * @example null
              */
-            withholdingTaxAmount: Record<string, never> | null;
+            withholdingTaxAmount: number | null;
             /**
              * @description Withholding tax enabled
              * @example false
@@ -1251,7 +1251,7 @@ export type components = {
              * @description VAT exemption reason
              * @example null
              */
-            vatExemptionReason: Record<string, never> | null;
+            vatExemptionReason: string | null;
             /**
              * @description Automatic VAT enabled
              * @example false
@@ -1277,25 +1277,25 @@ export type components = {
              * @description Only on the lines of partial credit/debit notes: what the line changes on the corrected invoice line — the quantity (QUANTITY) or the unit price (PRICE). Absent on other lines and on older notes.
              * @example QUANTITY
              */
-            noteChangeKind?: Record<string, never> | null;
+            noteChangeKind?: string | null;
             /**
              * @description With noteChangeKind: the quantity or unit price of the invoice line before this note.
              * @example 5
              */
-            noteChangeFrom?: Record<string, never> | null;
+            noteChangeFrom?: number | null;
             /**
              * @description With noteChangeKind: the quantity or unit price of the invoice line after this note.
              * @example 3
              */
-            noteChangeTo?: Record<string, never> | null;
+            noteChangeTo?: number | null;
         };
         InvoiceScheduleAutoSendEmailsResponseDto: {
             /** @example true */
-            sendToCustomer: Record<string, never> | null;
+            sendToCustomer: boolean | null;
             /** @example null */
             customerEmail: string | null;
             /** @example false */
-            sendToIssuer: Record<string, never> | null;
+            sendToIssuer: boolean | null;
         };
         InvoiceScheduleResponseDto: {
             /**
@@ -1314,7 +1314,7 @@ export type components = {
              * @description Interval between occurrences. Only has an effect with frequency=CUSTOM (schedules created in the web app); the API keeps it on update.
              * @example 1
              */
-            interval: Record<string, never> | null;
+            interval: number | null;
             /**
              * @description Internal schedule name
              * @example null
@@ -1352,12 +1352,12 @@ export type components = {
              * @description Due term in days
              * @example 30
              */
-            dueDateInDaysRange: Record<string, never> | null;
+            dueDateInDaysRange: number | null;
             /**
              * @description Automatic email sending
              * @example true
              */
-            autoSend: Record<string, never> | null;
+            autoSend: boolean | null;
             /** @description Recipients of the automatic sending */
             autoSendEmails: components["schemas"]["InvoiceScheduleAutoSendEmailsResponseDto"] | null;
             /**
@@ -1616,7 +1616,7 @@ export type components = {
              * @description Invoice notes
              * @example null
              */
-            notes: Record<string, never> | null;
+            notes: string | null;
             /** @description Invoice series */
             series: components["schemas"]["SeriesDto"];
             /**
@@ -1742,7 +1742,7 @@ export type components = {
              * @description Number of the reversed invoice
              * @example FR FIZ2026/336
              */
-            parentInvoiceNumber: Record<string, never> | null;
+            parentInvoiceNumber: string | null;
             /**
              * Format: date-time
              * @description Date of supply, when recorded (art. 36.º n.º 5 al. f) CIVA). Comes back null when it was not recorded — the issue date applies in that case.
@@ -1836,7 +1836,7 @@ export type components = {
              * @description AT code
              * @example null
              */
-            atCode: Record<string, never> | null;
+            atCode: string | null;
             /**
              * @description AT message
              * @example AT sync failed without error details
@@ -1846,7 +1846,7 @@ export type components = {
              * @description System error
              * @example null
              */
-            systemError: Record<string, never> | null;
+            systemError: string | null;
             /**
              * @description Can be retried
              * @example false
@@ -1893,7 +1893,7 @@ export type components = {
              * @description Invoice notes
              * @example null
              */
-            notes: Record<string, never> | null;
+            notes: string | null;
             /** @description Invoice series */
             series: components["schemas"]["SeriesDto"];
             /**
@@ -2122,7 +2122,7 @@ export type components = {
              * @description Cancellation date
              * @example 2026-06-30T10:00:00.000Z
              */
-            canceledAt: Record<string, never> | null;
+            canceledAt: string | null;
             /** @description AT synchronization status */
             syncWithAt: components["schemas"]["SyncWithAtDto"] | null;
         };
@@ -2948,7 +2948,7 @@ export type components = {
              * @description Unit price including VAT, computed from the price before VAT and the item's rate, rounded to the cent
              * @example 1845
              */
-            unitPriceWithVat: Record<string, never> | null;
+            unitPriceWithVat: number | null;
             /**
              * @description Unit type
              * @example UNIT
@@ -3516,12 +3516,12 @@ export type components = {
              * @description Series validation code (ATCUD) assigned by the AT
              * @example AAJF
              */
-            validationCode?: Record<string, never> | null;
+            validationCode?: string | null;
             /**
              * @description Whether the entry is verified/reported to the AT
              * @example true
              */
-            isVerified?: Record<string, never> | null;
+            isVerified?: boolean | null;
         };
         GetSeriesResponseDto: {
             /**
@@ -3533,22 +3533,22 @@ export type components = {
              * @description Series name
              * @example SAAS
              */
-            name?: Record<string, never> | null;
+            name?: string | null;
             /**
              * @description Whether this is the account's default series
              * @example true
              */
-            isDefault?: Record<string, never> | null;
+            isDefault?: boolean | null;
             /**
              * @description Series status
              * @example ACTIVE
              */
-            status?: Record<string, never> | null;
+            status?: string | null;
             /**
              * @description Where the series came from: AUTOMATIC (created by FIZ) or MANUAL (created by the user). It does not affect numbering: in both, FIZ assigns the number and the ATCUD on issue.
              * @example AUTOMATIC
              */
-            managementMode?: Record<string, never> | null;
+            managementMode?: string | null;
             /** @description Series entries per document type (with ATCUD) */
             entries?: components["schemas"]["SerieEntryResponseDto"][] | null;
         };
@@ -3922,7 +3922,7 @@ export type components = {
              * @description Exemption reason code (e.g. 40 = reverse charge, 16 = Art. 16), null when VAT applies
              * @example null
              */
-            reason: Record<string, never> | null;
+            reason: number | null;
             /**
              * @description Explanatory text for the applied rate/exemption
              * @example VAT normal rate by merchant territory in PT: continental
@@ -3939,12 +3939,12 @@ export type components = {
              * @description Customer territory used in the calculation. For Portuguese B2B customers it can be resolved automatically from the postal code
              * @example continental
              */
-            territory?: Record<string, never> | null;
+            territory?: string | null;
             /**
              * @description Validated-VAT-number indicator used in the calculation (0 or 1). Explains why an EU B2B sale did (or did not) get reverse charge / intra-community exemption. Mind the semantics: for EU countries (except PT) it reflects VIES validation; for PT and non-EU customers only the presence of a number; if the VIES service is unavailable, the clientHasVat value provided in the request is used
              * @example 0
              */
-            vies?: Record<string, never> | null;
+            vies?: number | null;
         };
         CalculateVatResponseDto: {
             /** @description VAT calculation result */
@@ -3955,12 +3955,12 @@ export type components = {
              * @description Warning about the calculation (if applicable)
              * @example null
              */
-            warning?: Record<string, never> | null;
+            warning?: string | null;
             /**
              * @description Warning code (if applicable)
              * @example null
              */
-            warningCode?: Record<string, never> | null;
+            warningCode?: string | null;
         };
         ValidateClientVatDto: {
             /**

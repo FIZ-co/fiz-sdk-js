@@ -7891,7 +7891,7 @@
             "example": 1590
           },
           "amountWithoutTaxWithoutDiscount": {
-            "type": "object",
+            "type": "number",
             "description": "Amount without tax and discount",
             "example": 1500,
             "nullable": true
@@ -7912,13 +7912,13 @@
             "nullable": true
           },
           "globalDiscountPercent": {
-            "type": "object",
+            "type": "number",
             "description": "Global discount percentage",
             "example": null,
             "nullable": true
           },
           "globalDiscountAmount": {
-            "type": "object",
+            "type": "number",
             "description": "Global discount amount",
             "example": null,
             "nullable": true
@@ -7934,13 +7934,13 @@
             "example": 1590
           },
           "withholdingTaxAmount": {
-            "type": "object",
+            "type": "number",
             "description": "Withholding tax amount",
             "example": null,
             "nullable": true
           },
           "creditNotesTotal": {
-            "type": "object",
+            "type": "number",
             "description": "Total of credit notes",
             "example": null,
             "nullable": true
@@ -7984,7 +7984,7 @@
             "example": 90
           },
           "discountAmount": {
-            "type": "object",
+            "type": "number",
             "description": "Discount amount applied to the item",
             "example": 0,
             "nullable": true
@@ -8000,7 +8000,7 @@
             "example": 1590
           },
           "withholdingTaxAmount": {
-            "type": "object",
+            "type": "number",
             "description": "Withholding tax amount",
             "example": null,
             "nullable": true
@@ -8062,7 +8062,7 @@
             "example": "CONTINENTAL"
           },
           "vatExemptionReason": {
-            "type": "object",
+            "type": "string",
             "description": "VAT exemption reason",
             "example": null,
             "nullable": true
@@ -8115,19 +8115,19 @@
             ]
           },
           "noteChangeKind": {
-            "type": "object",
+            "type": "string",
             "description": "Only on the lines of partial credit/debit notes: what the line changes on the corrected invoice line — the quantity (QUANTITY) or the unit price (PRICE). Absent on other lines and on older notes.",
             "example": "QUANTITY",
             "nullable": true
           },
           "noteChangeFrom": {
-            "type": "object",
+            "type": "number",
             "description": "With noteChangeKind: the quantity or unit price of the invoice line before this note.",
             "example": 5,
             "nullable": true
           },
           "noteChangeTo": {
-            "type": "object",
+            "type": "number",
             "description": "With noteChangeKind: the quantity or unit price of the invoice line after this note.",
             "example": 3,
             "nullable": true
@@ -8144,7 +8144,7 @@
         "type": "object",
         "properties": {
           "sendToCustomer": {
-            "type": "object",
+            "type": "boolean",
             "example": true,
             "nullable": true
           },
@@ -8154,7 +8154,7 @@
             "nullable": true
           },
           "sendToIssuer": {
-            "type": "object",
+            "type": "boolean",
             "example": false,
             "nullable": true
           }
@@ -8194,7 +8194,7 @@
             "example": "MONTHLY"
           },
           "interval": {
-            "type": "object",
+            "type": "number",
             "description": "Interval between occurrences. Only has an effect with frequency=CUSTOM (schedules created in the web app); the API keeps it on update.",
             "example": 1,
             "nullable": true
@@ -8241,13 +8241,13 @@
             "nullable": true
           },
           "dueDateInDaysRange": {
-            "type": "object",
+            "type": "number",
             "description": "Due term in days",
             "example": 30,
             "nullable": true
           },
           "autoSend": {
-            "type": "object",
+            "type": "boolean",
             "description": "Automatic email sending",
             "example": true,
             "nullable": true
@@ -8663,7 +8663,7 @@
             "example": "ISSUED"
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "description": "Invoice notes",
             "example": null,
             "nullable": true
@@ -8904,7 +8904,7 @@
             "example": "6900afc7e9a04d2adc897c68"
           },
           "parentInvoiceNumber": {
-            "type": "object",
+            "type": "string",
             "description": "Number of the reversed invoice",
             "example": "FR FIZ2026/336",
             "nullable": true
@@ -9052,7 +9052,7 @@
             "example": "FAILED"
           },
           "atCode": {
-            "type": "object",
+            "type": "string",
             "description": "AT code",
             "example": null,
             "nullable": true
@@ -9063,7 +9063,7 @@
             "example": "AT sync failed without error details"
           },
           "systemError": {
-            "type": "object",
+            "type": "string",
             "description": "System error",
             "example": null,
             "nullable": true
@@ -9122,7 +9122,7 @@
             "example": "ISSUED"
           },
           "notes": {
-            "type": "object",
+            "type": "string",
             "description": "Invoice notes",
             "example": null,
             "nullable": true
@@ -9544,7 +9544,7 @@
             "example": "CANCELED"
           },
           "canceledAt": {
-            "type": "object",
+            "type": "string",
             "description": "Cancellation date",
             "example": "2026-06-30T10:00:00.000Z",
             "nullable": true
@@ -10722,7 +10722,7 @@
             "nullable": true
           },
           "unitPriceWithVat": {
-            "type": "object",
+            "type": "number",
             "description": "Unit price including VAT, computed from the price before VAT and the item's rate, rounded to the cent",
             "example": 1845,
             "nullable": true
@@ -11684,13 +11684,13 @@
             "example": "INVOICE"
           },
           "validationCode": {
-            "type": "object",
+            "type": "string",
             "description": "Series validation code (ATCUD) assigned by the AT",
             "example": "AAJF",
             "nullable": true
           },
           "isVerified": {
-            "type": "object",
+            "type": "boolean",
             "description": "Whether the entry is verified/reported to the AT",
             "example": true,
             "nullable": true
@@ -11709,25 +11709,25 @@
             "example": "68483b3fa19e44171e3d0808"
           },
           "name": {
-            "type": "object",
+            "type": "string",
             "description": "Series name",
             "example": "SAAS",
             "nullable": true
           },
           "isDefault": {
-            "type": "object",
+            "type": "boolean",
             "description": "Whether this is the account's default series",
             "example": true,
             "nullable": true
           },
           "status": {
-            "type": "object",
+            "type": "string",
             "description": "Series status",
             "example": "ACTIVE",
             "nullable": true
           },
           "managementMode": {
-            "type": "object",
+            "type": "string",
             "description": "Where the series came from: AUTOMATIC (created by FIZ) or MANUAL (created by the user). It does not affect numbering: in both, FIZ assigns the number and the ATCUD on issue.",
             "example": "AUTOMATIC",
             "nullable": true
@@ -12412,7 +12412,7 @@
             "example": 23
           },
           "reason": {
-            "type": "object",
+            "type": "number",
             "description": "Exemption reason code (e.g. 40 = reverse charge, 16 = Art. 16), null when VAT applies",
             "example": null,
             "nullable": true
@@ -12438,13 +12438,13 @@
             "example": "PT"
           },
           "territory": {
-            "type": "object",
+            "type": "string",
             "description": "Customer territory used in the calculation. For Portuguese B2B customers it can be resolved automatically from the postal code",
             "example": "continental",
             "nullable": true
           },
           "vies": {
-            "type": "object",
+            "type": "number",
             "description": "Validated-VAT-number indicator used in the calculation (0 or 1). Explains why an EU B2B sale did (or did not) get reverse charge / intra-community exemption. Mind the semantics: for EU countries (except PT) it reflects VIES validation; for PT and non-EU customers only the presence of a number; if the VIES service is unavailable, the clientHasVat value provided in the request is used",
             "example": 0,
             "nullable": true
@@ -12474,13 +12474,13 @@
             ]
           },
           "warning": {
-            "type": "object",
+            "type": "string",
             "description": "Warning about the calculation (if applicable)",
             "example": null,
             "nullable": true
           },
           "warningCode": {
-            "type": "object",
+            "type": "string",
             "description": "Warning code (if applicable)",
             "example": null,
             "nullable": true
