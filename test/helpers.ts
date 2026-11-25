@@ -36,5 +36,13 @@ export function mockFiz(replies: Reply[], options: ConstructorParameters<typeof 
     });
   });
   const fiz = new Fiz({ apiKey: 'fiz_live_key', fetch, ...options });
+  // Files on another origin go through the global fetch: answered by the same
+  // queue, so a test reads every request in order.
+  setFileFetch(fiz, fetch);
   return { fiz, fetch, requests };
+}
+
+/** Replaces the fetch a Fiz client downloads files on another origin with. */
+export function setFileFetch(fiz: Fiz, fetch: typeof globalThis.fetch): void {
+  (fiz as unknown as { client: { fileFetch: typeof globalThis.fetch } }).client.fileFetch = fetch;
 }

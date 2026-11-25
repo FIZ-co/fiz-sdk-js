@@ -24,11 +24,13 @@ whole company and must never reach a browser, so the client refuses to start in 
 
 Run it with a **sandbox key**: create one at [app.fiz.co → Settings → Integrations](https://app.fiz.co/settings/integrations)
 and put it in `FIZ_API_KEY`. A key starting with `fiz_test_` sends documents
-to the AT test services, with no fiscal effect. The walkthrough below stops on
-any other key, because its last step issues a real invoice with a production
-key.
+to the AT test services, with no fiscal effect. Both steps below stop on any
+other key, because the second one issues a real invoice with a production key.
+
+**Step 1: a draft and its PDF.** A draft has no number and no fiscal effect.
 
 ```ts
+import { writeFile } from 'node:fs/promises';
 import { Fiz } from '@fiz-co/sdk';
 
 const fiz = new Fiz(); // reads FIZ_API_KEY
@@ -50,29 +52,41 @@ const item = await fiz.items.create({
   unitPrice: 10,
   vatRate: 'NORMAL',
 });
-
-// A draft has no number and no fiscal effect.
 const draft = await fiz.invoices.create({
   type: 'INVOICE',
   cae,
   customerId: customer.id,
   items: [{ id: item.id, quantity: 1 }],
 });
-const pdf = await fiz.invoices.downloadPdf(draft.id); // ArrayBuffer
-
-// Issuing is fiscal and irreversible with a production key: numbered, ATCUD,
-// reported to the AT. expectedUpdatedAt issues exactly the draft you looked
-// at, and refuses it if it changed since.
-// Without a revision there is nothing to check against: stop rather than
-// issue whatever the draft is by then.
+await writeFile('draft.pdf', Buffer.from(await fiz.invoices.downloadPdf(draft.id)));
+// The revision pins what you are about to look at. Without one there is nothing
+// to check the issue against: stop rather than issue whatever the draft is by then.
 if (!draft.updatedAt) throw new Error('The draft came back without its revision.');
-const invoice = await fiz.invoices.issue(draft.id, { expectedUpdatedAt: draft.updatedAt });
+console.log('Look at draft.pdf, then issue:', draft.id, draft.updatedAt);
+```
+
+**Step 2, once you have looked at the PDF: issue that draft.** Issuing is
+fiscal and irreversible with a production key: numbered, ATCUD, reported to
+the AT. `expectedUpdatedAt` issues exactly the draft you looked at, and the
+API refuses it if anyone changed it since.
+
+```ts
+import { Fiz } from '@fiz-co/sdk';
+
+const fiz = new Fiz();
+if (fiz.environment !== 'sandbox') {
+  throw new Error('Use a sandbox key (fiz_test_…) for this walkthrough.');
+}
+
+const [draftId, revision] = process.argv.slice(2); // what step 1 printed
+if (!draftId || !revision) throw new Error('Pass the draft id and revision step 1 printed.');
+const invoice = await fiz.invoices.issue(draftId, { expectedUpdatedAt: revision });
 console.log(invoice.number, invoice.atcud);
 ```
 
-A runnable version is in [`examples/quickstart.ts`](examples/quickstart.ts).
-It issues in two runs: the first creates the draft and saves its PDF, the
-second issues that draft by its id, after you have looked at it.
+The same two steps as one runnable script are in
+[`examples/quickstart.ts`](examples/quickstart.ts): its first run creates the
+draft and saves its PDF, and a second run with `--issue` issues that draft.
 
 ## What it covers
 
@@ -189,11 +203,15 @@ new Fiz({
   baseUrl: 'https://api.fiz.co',
   maxRetries: 2,
   timeout: 60_000,          // per attempt, ms
-  fetch,                    // custom fetch
+  fetch,                    // custom fetch (API requests only, see below)
   appInfo: { name: 'my-shop', version: '1.2.0' }, // added to the User-Agent
   onResponse: (r) => console.info(r.operationId, r.status, r.requestId), // every response
 });
 ```
+
+A custom `fetch` sends every API request. A file the API links to on another
+host (where a PDF is stored) is fetched with the global `fetch` instead, so
+nothing your `fetch` adds (a header, a token) reaches that host.
 
 `onResponse` is called with every response to an API operation, retries
 included (the file download behind `downloadPdf` is not an operation and is

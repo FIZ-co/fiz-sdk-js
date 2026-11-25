@@ -12,7 +12,7 @@ import {
   FizServerError,
   FizTimeoutError,
 } from '../src/index.js';
-import { mockFiz } from './helpers.js';
+import { mockFiz, setFileFetch } from './helpers.js';
 
 const customer = { name: 'Example customer', country: 'PT' };
 
@@ -624,6 +624,33 @@ describe('PDF download', () => {
   it('raises a FizError when the API gives no link', async () => {
     const { fiz } = mockFiz([{ status: 200, body: { id: 'f1', name: null, url: null } }]);
     await expect(fiz.invoices.downloadPdf('inv1')).rejects.toBeInstanceOf(FizError);
+  });
+
+  it('never sends a foreign link through options.fetch', async () => {
+    // A custom fetch runs on every request sent through it and may add a
+    // credential; the host that stores the file must never see it.
+    const hosts: string[] = [];
+    const custom = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      hosts.push(new URL(String(input)).host);
+      const headers = new Headers(init?.headers);
+      headers.set('authorization', 'Bearer from-a-custom-fetch');
+      return new Response(
+        JSON.stringify({ id: 'f1', name: 'FT.pdf', url: 'https://files.example.com/FT.pdf' }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    });
+    const files: { host: string; headers: Headers }[] = [];
+    const global = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      files.push({ host: new URL(String(input)).host, headers: new Headers(init?.headers) });
+      return new Response('%PDF', { status: 200 });
+    });
+    const fiz = new Fiz({ apiKey: 'fiz_live_key', fetch: custom as typeof fetch });
+    setFileFetch(fiz, global as typeof fetch);
+    expect(new TextDecoder().decode(await fiz.invoices.downloadPdf('inv1'))).toBe('%PDF');
+    expect(hosts).toEqual(['api.fiz.co']);
+    expect(files.map((f) => f.host)).toEqual(['files.example.com']);
+    expect(files[0]!.headers.has('authorization')).toBe(false);
+    expect(files[0]!.headers.has('x-api-key')).toBe(false);
   });
 
   it('fetches a foreign link without credentials', async () => {
