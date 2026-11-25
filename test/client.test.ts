@@ -42,16 +42,18 @@ describe('credentials', () => {
 
   it('reads FIZ_API_KEY when no credential is passed', async () => {
     vi.stubEnv('FIZ_API_KEY', 'fiz_test_from_env');
+    expect(new Fiz().environment).toBe('sandbox');
     const { fiz, requests } = mockFiz([{ status: 200, body: {} }], { apiKey: undefined });
     await fiz.company.retrieve();
     expect(requests[0]!.headers['x-api-key']).toBe('fiz_test_from_env');
     expect(fiz.environment).toBe('sandbox');
   });
 
-  it.each(['', '   '])('refuses a blank OAuth token even with an environment key', (accessToken) => {
+  it.each([undefined, null, 42, '', '   '])('rejects an explicit invalid accessToken (%j)', (value) => {
     vi.stubEnv('FIZ_API_KEY', 'fiz_test_from_env');
     const fetch = vi.fn();
-    expect(() => new Fiz({ accessToken, fetch })).toThrow(/accessToken/);
+    // JavaScript callers can pass a value of any type from a token response.
+    expect(() => new Fiz({ accessToken: value as string, fetch })).toThrow(/accessToken must be/);
     expect(fetch).not.toHaveBeenCalled();
   });
 

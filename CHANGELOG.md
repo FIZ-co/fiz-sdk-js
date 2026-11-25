@@ -5,8 +5,8 @@ in the [API changelog](https://api.fiz.co/docs/changelog).
 
 ## Unreleased
 
-- The client rejects an explicitly blank OAuth access token. Previously an
-  empty string could select the API key from the environment.
+- Passing the `accessToken` option requires a non-empty OAuth token string.
+  Previously, an explicit `undefined` or empty string could select the environment API key.
 
 ## 0.1.0 — 2026-11-24
 
