@@ -110,6 +110,9 @@ export class FizClient {
     if (options.apiKey && options.accessToken) {
       throw new FizError('Pass either apiKey or accessToken, not both.');
     }
+    if (options.accessToken !== undefined && !options.accessToken?.trim()) {
+      throw new FizError('accessToken must be a non-empty OAuth access token.');
+    }
     const apiKey = options.accessToken ? undefined : (options.apiKey ?? envApiKey());
     if (!apiKey && !options.accessToken) {
       throw new FizError(

@@ -3,6 +3,11 @@
 Versions follow [semver](https://semver.org). Changes to the API itself are
 in the [API changelog](https://api.fiz.co/docs/changelog).
 
+## Unreleased
+
+- The client rejects an explicitly blank OAuth access token. Previously an
+  empty string could select the API key from the environment.
+
 ## 0.1.0 — 2026-11-24
 
 First release.

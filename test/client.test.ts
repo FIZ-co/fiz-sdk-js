@@ -48,6 +48,13 @@ describe('credentials', () => {
     expect(fiz.environment).toBe('sandbox');
   });
 
+  it.each(['', '   '])('refuses a blank OAuth token even with an environment key', (accessToken) => {
+    vi.stubEnv('FIZ_API_KEY', 'fiz_test_from_env');
+    const fetch = vi.fn();
+    expect(() => new Fiz({ accessToken, fetch })).toThrow(/accessToken/);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
   it('refuses both credentials, and none', () => {
     vi.stubEnv('FIZ_API_KEY', '');
     expect(() => new Fiz({ apiKey: 'a', accessToken: 'b', fetch })).toThrow(FizError);
