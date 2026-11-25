@@ -3,8 +3,11 @@
 Versions follow [semver](https://semver.org). Changes to the API itself are
 in the [API changelog](https://api.fiz.co/docs/changelog).
 
-## Unreleased
+## 0.1.1 — 2026-11-25
 
+- A file the API links to on another host (where a PDF is stored) is
+  downloaded with the global `fetch`, never with a custom `fetch` option: a
+  custom fetch could add a header or a token to every request it sends.
 - Passing the `accessToken` option requires a non-empty OAuth token string.
   A token supplied through a getter, including an inherited getter, is read once.
   Previously, an explicit `undefined` or empty string could select the environment API key.
