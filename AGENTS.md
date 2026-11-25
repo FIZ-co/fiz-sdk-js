@@ -75,6 +75,10 @@ FIZ_TEST_API_KEY=fiz_test_… npm run test:sandbox   # against the API sandbox
 - **Every API operation has a resource method.** `test/coverage.test.ts`
   fails until a new operation is wrapped; until then it is reachable through
   `fiz.call('<operationId>')`.
+- **`method-map.json` follows the resource methods.** The API docs at
+  api.fiz.co show each operation in TypeScript from it (method and
+  arguments). After adding or renaming a method run `npm run method-map`;
+  `test/method-map.test.ts` fails while it is out of date.
 - **The client's safety rules are behaviour, not style.** A change to any of
   them comes with a test that fails on the previous client:
   - one `Idempotency-Key` per call, reused by every retry; an invalid key is
