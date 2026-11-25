@@ -107,19 +107,26 @@ export class FizClient {
         'The FIZ SDK is for servers: in a browser, every visitor could read the API key or token. Call FIZ from your backend, or pass dangerouslyAllowBrowser: true if only the key owner can open this page.',
       );
     }
-    if (options.apiKey && options.accessToken) {
-      throw new FizError('Pass either apiKey or accessToken, not both.');
+    if ('accessToken' in options) {
+      const accessToken = options.accessToken;
+      if (typeof accessToken !== 'string' || !accessToken.trim()) {
+        throw new FizError('accessToken must be a non-empty OAuth access token.');
+      }
+      if (options.apiKey) {
+        throw new FizError('Pass either apiKey or accessToken, not both.');
+      }
+      this.authHeaders = { authorization: `Bearer ${accessToken}` };
+      this.environment = 'production';
+    } else {
+      const apiKey = options.apiKey ?? envApiKey();
+      if (!apiKey) {
+        throw new FizError(
+          'No credential: pass apiKey (or set FIZ_API_KEY) or accessToken. API keys are created at https://app.fiz.co/settings/integrations.',
+        );
+      }
+      this.authHeaders = { 'x-api-key': apiKey };
+      this.environment = apiKey.startsWith(SANDBOX_KEY_PREFIX) ? 'sandbox' : 'production';
     }
-    const apiKey = options.accessToken ? undefined : (options.apiKey ?? envApiKey());
-    if (!apiKey && !options.accessToken) {
-      throw new FizError(
-        'No credential: pass apiKey (or set FIZ_API_KEY) or accessToken. API keys are created at https://app.fiz.co/settings/integrations.',
-      );
-    }
-    this.authHeaders = apiKey
-      ? { 'x-api-key': apiKey }
-      : { authorization: `Bearer ${options.accessToken}` };
-    this.environment = apiKey?.startsWith(SANDBOX_KEY_PREFIX) ? 'sandbox' : 'production';
     this.baseUrl = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
     this.maxRetries = options.maxRetries ?? 2;
     this.timeout = options.timeout ?? 60_000;

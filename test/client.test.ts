@@ -42,10 +42,44 @@ describe('credentials', () => {
 
   it('reads FIZ_API_KEY when no credential is passed', async () => {
     vi.stubEnv('FIZ_API_KEY', 'fiz_test_from_env');
+    expect(new Fiz().environment).toBe('sandbox');
     const { fiz, requests } = mockFiz([{ status: 200, body: {} }], { apiKey: undefined });
     await fiz.company.retrieve();
     expect(requests[0]!.headers['x-api-key']).toBe('fiz_test_from_env');
     expect(fiz.environment).toBe('sandbox');
+  });
+
+  it.each([undefined, null, 42, '', '   '])('rejects an explicit invalid accessToken (%j)', (value) => {
+    vi.stubEnv('FIZ_API_KEY', 'fiz_test_from_env');
+    const fetch = vi.fn();
+    // JavaScript callers can pass a value of any type from a token response.
+    expect(() => new Fiz({ accessToken: value as string, fetch })).toThrow(/accessToken must be/);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it.each([undefined, ''])('rejects an empty token from an inherited getter (%j)', (token) => {
+    vi.stubEnv('FIZ_API_KEY', 'fiz_test_from_env');
+    class Options {
+      get accessToken() { return token; }
+    }
+    expect(() => new Fiz(new Options())).toThrow(/accessToken must be/);
+  });
+
+  it('uses the validated value of an inherited token getter exactly once', async () => {
+    vi.stubEnv('FIZ_API_KEY', 'fiz_test_from_env');
+    const readToken = vi.fn(() => 'fiz_oat_token');
+    const fetch = vi.fn<typeof globalThis.fetch>().mockResolvedValue(Response.json({}));
+    class Options {
+      fetch = fetch;
+      get accessToken() { return readToken(); }
+    }
+
+    const fiz = new Fiz(new Options());
+    await fiz.company.retrieve();
+    expect(readToken).toHaveBeenCalledTimes(1);
+    const headers = new Headers(fetch.mock.calls[0]![1]?.headers);
+    expect(headers.get('authorization')).toBe('Bearer fiz_oat_token');
+    expect(headers.has('x-api-key')).toBe(false);
   });
 
   it('refuses both credentials, and none', () => {

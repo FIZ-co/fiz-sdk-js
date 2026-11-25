@@ -3,6 +3,12 @@
 Versions follow [semver](https://semver.org). Changes to the API itself are
 in the [API changelog](https://api.fiz.co/docs/changelog).
 
+## Unreleased
+
+- Passing the `accessToken` option requires a non-empty OAuth token string.
+  A token supplied through a getter, including an inherited getter, is read once.
+  Previously, an explicit `undefined` or empty string could select the environment API key.
+
 ## 0.1.0 — 2026-11-24
 
 First release.
