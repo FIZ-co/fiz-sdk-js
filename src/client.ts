@@ -98,6 +98,11 @@ export class FizClient {
   readonly environment: 'production' | 'sandbox';
   private readonly authHeaders: Record<string, string>;
   private readonly fetchImpl: typeof fetch;
+  /**
+   * For files on another origin: the global fetch, never `options.fetch`, which
+   * runs on every request sent through it and may add a credential.
+   */
+  private fileFetch: typeof fetch | undefined;
   private readonly userAgent: string;
   private readonly onResponse: FizOptions['onResponse'];
 
@@ -133,6 +138,7 @@ export class FizClient {
     const fetchImpl = options.fetch ?? globalThis.fetch;
     if (!fetchImpl) throw new FizError('No fetch available: pass options.fetch.');
     this.fetchImpl = fetchImpl.bind(globalThis);
+    this.fileFetch = globalThis.fetch?.bind(globalThis);
     this.userAgent = userAgent(options.appInfo);
     this.onResponse = options.onResponse;
   }
@@ -268,19 +274,23 @@ export class FizClient {
   /**
    * Downloads a file the API linked to (a PDF, an export). Credentials are
    * sent only to the API's own origin, checked again on every redirect: fetch
-   * would otherwise carry `x-api-key` to wherever a redirect points.
+   * would otherwise carry `x-api-key` to wherever a redirect points. Another
+   * origin (where the file is stored) is fetched with the global fetch, not
+   * `options.fetch`, so nothing a custom fetch adds reaches it.
    */
   async download(fileUrl: string, options: Pick<RequestOptions, 'timeout' | 'signal'> = {}): Promise<ArrayBuffer> {
     const apiOrigin = new URL(this.baseUrl).origin;
     let url = new URL(fileUrl);
     for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+      const own = url.origin === apiOrigin;
       const response = await this.attempt(
         url.href,
         'GET',
-        url.origin === apiOrigin ? { 'user-agent': this.userAgent, ...this.authHeaders } : {},
+        own ? { 'user-agent': this.userAgent, ...this.authHeaders } : {},
         undefined,
         options.timeout ?? this.timeout,
         options.signal,
+        !own,
       );
       if (isRedirect(response)) {
         const next = response.headers.get('location');
@@ -320,9 +330,14 @@ export class FizClient {
     body: string | undefined,
     timeout: number,
     signal: AbortSignal | undefined,
+    foreign = false,
   ): Promise<Response> {
+    const fetchImpl = foreign ? this.fileFetch : this.fetchImpl;
+    if (!fetchImpl) {
+      return Promise.reject(new FizError('No global fetch to download a file stored on another host.'));
+    }
     const timeoutSignal = AbortSignal.timeout(timeout);
-    return this.fetchImpl(url, {
+    return fetchImpl(url, {
       method,
       headers,
       body,

@@ -203,11 +203,15 @@ new Fiz({
   baseUrl: 'https://api.fiz.co',
   maxRetries: 2,
   timeout: 60_000,          // per attempt, ms
-  fetch,                    // custom fetch
+  fetch,                    // custom fetch (API requests only, see below)
   appInfo: { name: 'my-shop', version: '1.2.0' }, // added to the User-Agent
   onResponse: (r) => console.info(r.operationId, r.status, r.requestId), // every response
 });
 ```
+
+A custom `fetch` sends every API request. A file the API links to on another
+host (where a PDF is stored) is fetched with the global `fetch` instead, so
+nothing your `fetch` adds (a header, a token) reaches that host.
 
 `onResponse` is called with every response to an API operation, retries
 included (the file download behind `downloadPdf` is not an operation and is
